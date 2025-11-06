@@ -9,7 +9,7 @@ export default function BlurTransition() {
       <GradualBlur
         position="bottom"
         strength={8}
-        height="300px"
+        height="220px"
         opacity={1}
         className={styles.sectionTransition}
       />

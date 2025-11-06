@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  height: 100vh;
+  height: 70vh;
   width: 100%;
   overflow: hidden;
   margin: 0;
@@ -8,15 +8,112 @@
 }
 
 .heroContent {
-  position: relative;
-  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   width: 100%;
   padding: 2rem;
   margin: 0;
   color: var(--foreground);
+  pointer-events: none;
+  font-family: var(--font-primary);
+}
+
+.heroContent > * {
+  pointer-events: auto;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 7vw, 5.5rem);
+  font-weight: 700;
+  color: #fafafa !important;
+  text-align: center;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0;
+  position: relative;
+  z-index: 100;
+}
+
+.heroTitle span {
+  color: #fafafa !important;
+}
+
+.titleWrapper {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.subtitle {
+  margin-top: 2rem;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 600;
+  color: var(--blue-accent);
+  text-align: center;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: subtitleFadeIn 1.5s ease-in forwards;
+  animation-delay: 1.2s;
+}
+
+@keyframes subtitleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fafafa;
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.ctaButtonSecondary {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3b82f6;
+  background: transparent;
+  border: 2px solid #3b82f6;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ctaButtonSecondary:hover {
+  background: #3b82f6;
+  color: #fafafa;
+  transform: translateY(-2px);
 }

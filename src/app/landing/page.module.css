@@ -2,13 +2,13 @@
 
 .landing {
   min-height: 100vh;
-  background: #0a0a0a;
   color: var(--foreground);
   font-family: var(--font-primary);
   margin: 0;
   padding: 0;
   width: 100%;
   position: relative;
+  z-index: 5;
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -16,4 +16,20 @@
 
 .landing::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
+}
+
+.auroraBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+.auroraBackground.faded {
+  opacity: 0;
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { SnackbarProvider } from "./core/hooks/useSnackbar";
 
 const inter = Inter({
   variable: "--font-primary",
@@ -16,6 +17,22 @@ export const metadata: Metadata = {
   title: "NeroSpatial - AR/AI Spatial Intelligence",
   description:
     "Revolutionizing spatial intelligence with AR and AI technologies for immersive experiences and data-driven insights.",
+  icons: {
+    icon: "/nerospatial-logo.svg",
+  },
+  openGraph: {
+    title: "NeroSpatial - AR/AI Spatial Intelligence",
+    description:
+      "Revolutionizing spatial intelligence with AR and AI technologies for immersive experiences and data-driven insights.",
+    images: [
+      {
+        url: "/nerospatial-logo.svg",
+        width: 1200,
+        height: 630,
+        alt: "NeroSpatial Logo",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
-        {children}
+        <SnackbarProvider>{children}</SnackbarProvider>
       </body>
     </html>
   );

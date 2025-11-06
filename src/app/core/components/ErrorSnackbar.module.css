@@ -1,0 +1,90 @@
+.snackbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 400px;
+  min-width: 300px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--error);
+  color: var(--text-on-surface);
+  border-radius: 8px;
+  box-shadow: var(--shadow-blue);
+  border: var(--border-fluid);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.message {
+  flex: 1;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-on-surface);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.visible {
+  animation: slideIn 0.3s ease-out;
+}
+
+.hidden {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .snackbar {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
+}

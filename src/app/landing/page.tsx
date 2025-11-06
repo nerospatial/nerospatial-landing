@@ -40,10 +40,10 @@ export default function Landing() {
             }`}
           >
             <Aurora
-              colorStops={["#3A29FF", "#FF94B4", "#fa632f"]}
-              blend={0.5}
-              amplitude={1.0}
-              speed={0.5}
+              colorStops={["#1e1b4b", "#3b82f6", "#60a5fa", "#93c5fd", "#dbeafe"]}
+              blend={0.6}
+              amplitude={1.2}
+              speed={0.4}
             />
           </div>
           <div className={styles.landing}>

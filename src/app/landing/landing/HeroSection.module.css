@@ -33,7 +33,7 @@
 .heroTitle {
   font-size: clamp(2rem, 7vw, 5.5rem);
   font-weight: 700;
-  color: #fafafa !important;
+  color: #ffffff !important;
   text-align: center;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -43,7 +43,7 @@
 }
 
 .heroTitle span {
-  color: #fafafa !important;
+  color: #ffffff !important;
 }
 
 .titleWrapper {
@@ -55,12 +55,13 @@
   margin-top: 2rem;
   font-size: clamp(1.2rem, 3vw, 2rem);
   font-weight: 600;
-  color: var(--blue-accent);
+  color: #e0f2fe;
   text-align: center;
   letter-spacing: 0.05em;
   opacity: 0;
   animation: subtitleFadeIn 1.5s ease-in forwards;
   animation-delay: 1.2s;
+  text-shadow: 0 0 15px rgba(96, 165, 250, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes subtitleFadeIn {

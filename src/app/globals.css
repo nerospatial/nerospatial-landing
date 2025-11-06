@@ -1,12 +1,63 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Theme Colors - Dark Monochromatic with Blue Accents */
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --surface: #171717;
+  --surface-elevated: #1f1f1f;
+  --surface-variant: #2c2c2c;
+  --surface-overlay: rgba(59, 130, 246, 0.05);
+
+  /* Text Colors */
+  --text-primary: #fafafa;
+  --text-secondary: #9e9e9e;
+  --text-on-surface: #fafafa;
+
+  /* Blue Accents for Fluidity */
+  --blue-primary: #3b82f6;
+  --blue-secondary: #1e40af;
+  --blue-accent: #60a5fa;
+  --blue-glow: rgba(59, 130, 246, 0.3);
+
+  /* Gradients */
+  --gradient-fluid: linear-gradient(
+    135deg,
+    #0a0a0a 0%,
+    #171717 50%,
+    #262626 100%
+  );
+  --gradient-blue-fluid: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+
+  /* Interactive */
+  --button-blue: #3a81f6;
+  --shadow-blue: 0 0 20px rgba(59, 130, 246, 0.5);
+  --border-fluid: 1px solid rgba(59, 130, 246, 0.2);
+
+  /* Status Colors */
+  --success: #10b981;
+  --error: #ff6467;
+  --error-soft: #f87171;
+
+  /* Outlines */
+  --outline: #343434;
+  --outline-variant: #525252;
+
+  /* Fonts */
+  --font-primary: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Spacing */
+  --spacing-fluid: clamp(1rem, 2vw, 2rem);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light mode fallback - can be customized later */
+    --background: #ffffff;
+    --foreground: #171717;
+    --surface: #f5f5f5;
+    --surface-elevated: #ffffff;
+    --text-primary: #171717;
+    --text-secondary: #666666;
   }
 }
 
@@ -19,7 +70,7 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

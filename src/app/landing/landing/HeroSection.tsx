@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import BlurText from "@/components/BlurText";
 import styles from "./HeroSection.module.css";
 
 export default function HeroSection() {
@@ -10,9 +9,9 @@ export default function HeroSection() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const heroHeight = window.innerHeight * 0.6; // 60vh - hero section height
-      const fadeStart = heroHeight * 0.3; // Start fading at 30% of hero height
-      const fadeEnd = heroHeight * 0.6; // Complete fade at 80% of hero height
+      const heroHeight = window.innerHeight; // 100vh - full viewport height
+      const fadeStart = heroHeight * 0.7; // Start fading at 70% of hero height
+      const fadeEnd = heroHeight * 0.9; // Complete fade at 90% of hero height
 
       if (scrollY < fadeStart) {
         setContentOpacity(1);
@@ -32,20 +31,8 @@ export default function HeroSection() {
   return (
     <section className={styles.hero}>
       <div className={styles.heroContent} style={{ opacity: contentOpacity }}>
-        <div className={styles.titleWrapper}>
-          <BlurText
-            text="NeroSpatial"
-            delay={100}
-            animateBy="letters"
-            direction="top"
-            className={styles.heroTitle}
-          />
-        </div>
-        <p className={styles.subtitle}>Education of New Era</p>
-        <div className={styles.ctaButtons}>
-          <button className={styles.ctaButton}>Get Started</button>
-          <button className={styles.ctaButtonSecondary}>Learn More</button>
-        </div>
+        <h1 className={styles.mainTitle}>NeroSpatial</h1>
+        <h2 className={styles.subtitle}>Building Spatially Aware AI Tutors</h2>
       </div>
     </section>
   );

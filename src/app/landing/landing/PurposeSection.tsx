@@ -28,10 +28,14 @@ export default function PurposeSection() {
 
     // Set initial states
     gsap.set(container, { opacity: 0, visibility: "hidden" });
-    gsap.set(pageTitle, { opacity: 0 });
-    gsap.set(leftColumn, { opacity: 0, x: 0 });
-    gsap.set(rightColumn, { opacity: 0, x: 0 });
-    gsap.set(stampText, { opacity: 0, scale: 1 });
+    gsap.set(pageTitle, { opacity: 0, clipPath: "inset(0 0 100% 0)" });
+    gsap.set(leftColumn, { opacity: 0, x: 0, clipPath: "inset(0 0 100% 0)" });
+    gsap.set(rightColumn, { opacity: 0, x: 0, clipPath: "inset(0 0 100% 0)" });
+    gsap.set(stampText, {
+      opacity: 0,
+      scale: 1,
+      clipPath: "inset(0 0 100% 0)",
+    });
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -53,24 +57,31 @@ export default function PurposeSection() {
             visibility: "visible",
             duration: 0.1,
           });
-          // Fade in page title
+          // Unfold page title from top to bottom
           gsap.to(pageTitle, {
             opacity: fadeInProgress,
+            clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
             duration: 0.1,
           });
-          // Left column takes full width, centered
+          // Unfold left column from top to bottom
           gsap.to(leftColumn, {
             opacity: fadeInProgress,
             width: "100%",
+            clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
             duration: 0.1,
           });
           // Right column exists but takes no space and is invisible
           gsap.to(rightColumn, {
             opacity: 0,
             width: "0%",
+            clipPath: "inset(0 0 100% 0)",
             duration: 0.1,
           });
-          gsap.to(stampText, { opacity: 0, duration: 0.1 });
+          gsap.to(stampText, {
+            opacity: 0,
+            clipPath: "inset(0 0 100% 0)",
+            duration: 0.1,
+          });
           if (isHidden) setIsHidden(false);
         }
         // Phase 2: Shrink left container, expand right container space (20-40% of 500vh)
@@ -85,6 +96,7 @@ export default function PurposeSection() {
           // Keep page title visible
           gsap.to(pageTitle, {
             opacity: 1,
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
 
@@ -96,6 +108,7 @@ export default function PurposeSection() {
           gsap.to(leftColumn, {
             opacity: 1,
             width: `${leftWidth}%`,
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
 
@@ -104,9 +117,14 @@ export default function PurposeSection() {
           gsap.to(rightColumn, {
             opacity: 0,
             width: `${rightWidth}%`,
+            clipPath: "inset(0 0 100% 0)",
             duration: 0.1,
           });
-          gsap.to(stampText, { opacity: 0, duration: 0.1 });
+          gsap.to(stampText, {
+            opacity: 0,
+            clipPath: "inset(0 0 100% 0)",
+            duration: 0.1,
+          });
         }
         // Phase 3: Fade in video in the right column (40-60% of 500vh)
         else if (progress <= 0.6) {
@@ -120,6 +138,7 @@ export default function PurposeSection() {
           // Keep page title visible
           gsap.to(pageTitle, {
             opacity: 1,
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
 
@@ -127,16 +146,22 @@ export default function PurposeSection() {
           gsap.to(leftColumn, {
             opacity: 1,
             width: "50%",
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
 
-          // Fade in video
+          // Unfold video from top to bottom as it fades in
           gsap.to(rightColumn, {
             opacity: phase3Progress,
             width: "50%",
+            clipPath: `inset(0 0 ${100 - phase3Progress * 100}% 0)`,
             duration: 0.1,
           });
-          gsap.to(stampText, { opacity: 0, duration: 0.1 });
+          gsap.to(stampText, {
+            opacity: 0,
+            clipPath: "inset(0 0 100% 0)",
+            duration: 0.1,
+          });
         }
         // Phase 4: Hold both columns visible (60-70% of 500vh)
         else if (progress <= 0.7) {
@@ -148,21 +173,28 @@ export default function PurposeSection() {
           // Keep page title visible
           gsap.to(pageTitle, {
             opacity: 1,
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
           gsap.to(leftColumn, {
             opacity: 1,
             width: "50%",
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
           gsap.to(rightColumn, {
             opacity: 1,
             width: "50%",
+            clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
-          gsap.to(stampText, { opacity: 0, duration: 0.1 });
+          gsap.to(stampText, {
+            opacity: 0,
+            clipPath: "inset(0 0 100% 0)",
+            duration: 0.1,
+          });
         }
-        // Phase 5: Fade out both columns AND page title (70-75% of 500vh)
+        // Phase 5: Fold up both columns AND page title (70-75% of 500vh)
         else if (progress <= 0.75) {
           const fadeOutProgress = (progress - 0.7) / 0.05;
           gsap.to(container, {
@@ -170,42 +202,67 @@ export default function PurposeSection() {
             visibility: "visible",
             duration: 0.1,
           });
-          // Fade out page title along with columns
+          // Fold up page title from bottom to top
           gsap.to(pageTitle, {
             opacity: 1 - fadeOutProgress,
+            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
             duration: 0.1,
           });
+          // Fold up left column from bottom to top
           gsap.to(leftColumn, {
             opacity: 1 - fadeOutProgress,
             width: "50%",
+            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
             duration: 0.1,
           });
+          // Fold up right column from bottom to top
           gsap.to(rightColumn, {
             opacity: 1 - fadeOutProgress,
             width: "50%",
+            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
             duration: 0.1,
           });
-          gsap.to(stampText, { opacity: 0, duration: 0.1 });
+          gsap.to(stampText, {
+            opacity: 0,
+            clipPath: "inset(0 0 100% 0)",
+            duration: 0.1,
+          });
         }
-        // Phase 6: Stamp "Our Purpose" text (75-80% of 500vh)
-        else if (progress <= 0.8) {
-          const stampProgress = (progress - 0.75) / 0.05;
+        // Phase 6: Unfold "Our Purpose" text (75-78% of 500vh)
+        else if (progress <= 0.78) {
+          const stampProgress = (progress - 0.75) / 0.03;
           gsap.to(container, {
             opacity: 1,
             visibility: "visible",
             duration: 0.1,
           });
           // Keep page title hidden
-          gsap.to(pageTitle, { opacity: 0, duration: 0.1 });
-          gsap.to(leftColumn, { opacity: 0, width: "50%", duration: 0.1 });
-          gsap.to(rightColumn, { opacity: 0, width: "50%", duration: 0.1 });
+          gsap.to(pageTitle, {
+            opacity: 0,
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          gsap.to(leftColumn, {
+            opacity: 0,
+            width: "50%",
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          gsap.to(rightColumn, {
+            opacity: 0,
+            width: "50%",
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          // Unfold stamp text from top to bottom
           gsap.to(stampText, {
             opacity: stampProgress,
             scale: 1,
+            clipPath: `inset(0 0 ${100 - stampProgress * 100}% 0)`,
             duration: 0.1,
           });
         }
-        // Phase 7: Hold stamp (80-85% of 500vh)
+        // Phase 7: Hold stamp (78-85% of 500vh)
         else if (progress <= 0.85) {
           gsap.to(container, {
             opacity: 1,
@@ -213,10 +270,29 @@ export default function PurposeSection() {
             duration: 0.1,
           });
           // Keep page title hidden
-          gsap.to(pageTitle, { opacity: 0, duration: 0.1 });
-          gsap.to(leftColumn, { opacity: 0, width: "50%", duration: 0.1 });
-          gsap.to(rightColumn, { opacity: 0, width: "50%", duration: 0.1 });
-          gsap.to(stampText, { opacity: 1, scale: 1, duration: 0.1 });
+          gsap.to(pageTitle, {
+            opacity: 0,
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          gsap.to(leftColumn, {
+            opacity: 0,
+            width: "50%",
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          gsap.to(rightColumn, {
+            opacity: 0,
+            width: "50%",
+            clipPath: "inset(0 0 0% 100%)",
+            duration: 0.1,
+          });
+          gsap.to(stampText, {
+            opacity: 1,
+            scale: 1,
+            clipPath: "inset(0 0 0% 0)",
+            duration: 0.1,
+          });
         }
         // Phase 8: Zoom out and fade to transition to Vision (85-100% of 500vh)
         else {

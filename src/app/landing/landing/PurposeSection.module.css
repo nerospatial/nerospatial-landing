@@ -22,11 +22,11 @@
   height: 100vh; /* Full viewport height */
   z-index: 40; /* Below Hero (50) but above other content */
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 4rem;
-  gap: 4rem;
+  gap: 3rem;
   margin: 0;
   pointer-events: none;
   font-family: var(--font-primary);
@@ -38,23 +38,49 @@
   visibility: hidden;
 }
 
+.pageTitle {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.columnsWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 4rem;
+}
+
 .leftColumn {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  text-align: left;
+  text-align: center;
   opacity: 0;
-  padding-right: 2rem;
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+}
+
+.leftColumn.leftAligned {
+  align-items: center;
+  text-align: center;
+  padding-right: 0;
 }
 
 .rightColumn {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
+  width: 0%;
+  overflow: hidden;
   pointer-events: all; /* Enable pointer events for video click */
 }
 
@@ -63,6 +89,9 @@
   width: 100%;
   max-width: 700px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .playOverlay {
@@ -136,6 +165,8 @@
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  max-width: 600px;
 }
 
 .stampTitle {
@@ -159,19 +190,21 @@
 /* Responsive adjustments */
 @media (max-width: 968px) {
   .container {
-    flex-direction: column;
     padding: 2rem;
+    gap: 2rem;
+  }
+
+  .columnsWrapper {
+    flex-direction: column;
     gap: 2rem;
   }
 
   .leftColumn {
     padding-right: 0;
-    text-align: center;
-    align-items: center;
   }
 
   .rightColumn {
-    width: 100%;
+    width: 100% !important;
   }
 
   .videoWrapper {

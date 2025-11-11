@@ -43,12 +43,12 @@ export default function PurposeSection() {
 
       // Purpose section starts at ~196vh
       const purposeStart = (200 * viewportHeight * 0.98) / 100;
-      const purposeEnd = purposeStart + (500 * viewportHeight) / 100;
+      const purposeEnd = purposeStart + (800 * viewportHeight) / 100;
 
       if (scrollY >= purposeStart && scrollY <= purposeEnd) {
         const progress = (scrollY - purposeStart) / (purposeEnd - purposeStart);
 
-        // Phase 1: Fade in only text in center, taking full width (0-20% of 500vh)
+        // Phase 1: Fade in only text in center, taking full width (0-20% of 800vh)
         const phase1End = 0.2;
         if (progress <= phase1End) {
           const fadeInProgress = progress / phase1End;
@@ -66,7 +66,7 @@ export default function PurposeSection() {
           // Unfold left column from top to bottom
           gsap.to(leftColumn, {
             opacity: fadeInProgress,
-            width: "100%",
+            width: "800px",
             clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
             duration: 0.1,
           });
@@ -84,7 +84,7 @@ export default function PurposeSection() {
           });
           if (isHidden) setIsHidden(false);
         }
-        // Phase 2: Shrink left container, expand right container space (20-40% of 500vh)
+        // Phase 2: Shrink left container, expand right container space (20-40% of 800vh)
         else if (progress <= 0.4) {
           const phase2Progress = (progress - phase1End) / (0.4 - phase1End);
           gsap.to(container, {
@@ -103,11 +103,10 @@ export default function PurposeSection() {
           // Enable two-column layout mode for left alignment
           if (!isTwoColumnLayout) setIsTwoColumnLayout(true);
 
-          // Gradually shrink left column from 100% to 50%
-          const leftWidth = 100 - phase2Progress * 50;
+          // Gradually shrink left column from 800px to 50%
           gsap.to(leftColumn, {
             opacity: 1,
-            width: `${leftWidth}%`,
+            width: "50%",
             clipPath: "inset(0 0 0% 0)",
             duration: 0.1,
           });
@@ -126,7 +125,7 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 3: Fade in video in the right column (40-60% of 500vh)
+        // Phase 3: Fade in video in the right column (40-60% of 800vh)
         else if (progress <= 0.6) {
           const phase3Progress = (progress - 0.4) / (0.6 - 0.4);
           gsap.to(container, {
@@ -163,7 +162,7 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 4: Hold both columns visible (60-70% of 500vh)
+        // Phase 4: Hold both columns visible (60-70% of 800vh)
         else if (progress <= 0.7) {
           gsap.to(container, {
             opacity: 1,
@@ -194,9 +193,9 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 5: Fold up both columns AND page title (70-75% of 500vh)
-        else if (progress <= 0.75) {
-          const fadeOutProgress = (progress - 0.7) / 0.05;
+        // Phase 5: Fold up both columns AND page title (70-85% of 800vh)
+        else if (progress <= 0.85) {
+          const fadeOutProgress = (progress - 0.7) / 0.15;
           gsap.to(container, {
             opacity: 1,
             visibility: "visible",
@@ -228,9 +227,9 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 6: Unfold "Our Purpose" text (75-78% of 500vh)
-        else if (progress <= 0.78) {
-          const stampProgress = (progress - 0.75) / 0.03;
+        // Phase 6: Unfold "Our Purpose" text (85-87.5% of 800vh)
+        else if (progress <= 0.875) {
+          const stampProgress = (progress - 0.85) / 0.025;
           gsap.to(container, {
             opacity: 1,
             visibility: "visible",
@@ -262,8 +261,8 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 7: Hold stamp (78-85% of 500vh)
-        else if (progress <= 0.85) {
+        // Phase 7: Hold stamp (87.5-90% of 800vh)
+        else if (progress <= 0.9) {
           gsap.to(container, {
             opacity: 1,
             visibility: "visible",
@@ -294,9 +293,9 @@ export default function PurposeSection() {
             duration: 0.1,
           });
         }
-        // Phase 8: Zoom out and fade to transition to Vision (85-100% of 500vh)
+        // Phase 8: Zoom out and fade to transition to Vision (90-100% of 800vh - 100vh dedicated to this phase)
         else {
-          const zoomProgress = (progress - 0.85) / 0.15;
+          const zoomProgress = (progress - 0.9) / 0.1;
           const scale = 1 + zoomProgress * 5;
           const opacity = 1 - zoomProgress;
 

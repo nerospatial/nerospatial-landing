@@ -4,7 +4,7 @@ import styles from "./PurposeSection.module.css";
 
 export default function PurposeSection() {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-section="purpose">
       <div className={styles.container}>
         <h2 className={styles.title}>Purpose — Why We Exist</h2>
         <p className={styles.description}>

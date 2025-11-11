@@ -23,7 +23,7 @@ export default function ProductsSection() {
   ];
 
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-section="products">
       <div className={styles.container}>
         <h2 className={styles.title}>Products — The Form Factors</h2>
         <p className={styles.description}>

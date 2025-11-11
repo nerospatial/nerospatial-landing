@@ -28,10 +28,14 @@
   transform-origin: center center; /* Scale from center */
   perspective: 1000px; /* Add 3D perspective */
   transform-style: preserve-3d; /* Enable 3D transforms */
+  transition: none; /* Disable any CSS transitions that might interfere */
 }
 
-.heroContent > * {
-  pointer-events: auto;
+/* Force hide when display: none is set */
+.heroContent[style*="display: none"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .mainTitle {
@@ -93,5 +97,71 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: scrollIndicatorFadeIn 1s ease-out forwards;
+  animation-delay: 2.5s;
+  pointer-events: none;
+}
+
+.scrollText {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(226, 232, 240, 0.5);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  animation: pulseText 3s ease-in-out infinite;
+}
+
+.scrollArrow {
+  width: 32px;
+  height: 32px;
+  color: rgba(226, 232, 240, 0.4);
+  animation: floatArrow 2s ease-in-out infinite;
+}
+
+@keyframes pulseText {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(0.95);
+    opacity: 0.7;
+  }
+}
+
+@keyframes scrollIndicatorFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes floatArrow {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.7;
   }
 }

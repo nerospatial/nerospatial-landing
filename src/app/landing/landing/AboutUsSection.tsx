@@ -6,21 +6,19 @@ export default function AboutUsSection() {
   const team = [
     {
       name: "Jenish Togadiya",
-      role: "Hardware, Systems, Vision"
+      role: "Hardware, Systems, Vision",
     },
     {
       name: "Hariny Patel",
-      role: "AI, Cloud, Orchestration"
-    }
+      role: "AI, Cloud, Orchestration",
+    },
   ];
 
   return (
     <section className={styles.section}>
       <div className={styles.container}>
         <h2 className={styles.title}>About Us — The Builders</h2>
-        <p className={styles.description}>
-          Build founder trust and narrative.
-        </p>
+        <p className={styles.description}>Build founder trust and narrative.</p>
 
         <div className={styles.team}>
           {team.map((member, index) => (
@@ -32,11 +30,13 @@ export default function AboutUsSection() {
         </div>
 
         <div className={styles.note}>
-          Bootstrapped prototypes. National hackathon winners. Building from first principles.
+          Bootstrapped prototypes. National hackathon winners. Building from
+          first principles.
         </div>
 
         <div className={styles.visualNote}>
-          [Short bio cards. Tone: humble, hands-on, &quot;We build every layer ourselves.&quot;]
+          [Short bio cards. Tone: humble, hands-on, &quot;We build every layer
+          ourselves.&quot;]
         </div>
       </div>
     </section>

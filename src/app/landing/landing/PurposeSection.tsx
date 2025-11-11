@@ -10,10 +10,12 @@ export default function PurposeSection() {
         <p className={styles.description}>
           Humanity learned to scale content, not understanding.
           <br />
-          We&apos;re here to scale mentorship — so every mind can reach its potential.
+          We&apos;re here to scale mentorship — so every mind can reach its
+          potential.
         </p>
         <div className={styles.visualNote}>
-          [Visual idea: short looping video — student walking, AI voice whispering explanation, symbolizing contextual learning]
+          [Visual idea: short looping video — student walking, AI voice
+          whispering explanation, symbolizing contextual learning]
         </div>
       </div>
     </section>

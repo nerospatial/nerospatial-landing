@@ -6,20 +6,20 @@ export default function ProductsSection() {
   const products = [
     {
       name: "NeroCore",
-      tagline: "Audio-first smart glasses for everyday learners"
+      tagline: "Audio-first smart glasses for everyday learners",
     },
     {
       name: "NeroGlance",
-      tagline: "AR glasses bringing concepts to life visually"
+      tagline: "AR glasses bringing concepts to life visually",
     },
     {
       name: "NeroDivine",
-      tagline: "AI toys teaching values through stories"
+      tagline: "AI toys teaching values through stories",
     },
     {
       name: "NeroPersonas",
-      tagline: "Cloud AI mentors powering all NeroSpatial devices"
-    }
+      tagline: "Cloud AI mentors powering all NeroSpatial devices",
+    },
   ];
 
   return (
@@ -27,7 +27,8 @@ export default function ProductsSection() {
       <div className={styles.container}>
         <h2 className={styles.title}>Products — The Form Factors</h2>
         <p className={styles.description}>
-          Ground the vision into real products. Show the ecosystem, not just gadgets.
+          Ground the vision into real products. Show the ecosystem, not just
+          gadgets.
         </p>
 
         <div className={styles.productsGrid}>

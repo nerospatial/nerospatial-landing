@@ -19,7 +19,9 @@ export default function VisionSection() {
 
           <div className={styles.subsection}>
             <h3 className={styles.subtitle}>Contextual Intelligence</h3>
-            <p className={styles.subtext}>Learns from your environment and behavior.</p>
+            <p className={styles.subtext}>
+              Learns from your environment and behavior.
+            </p>
           </div>
 
           <div className={styles.subsection}>
@@ -29,7 +31,8 @@ export default function VisionSection() {
         </div>
 
         <div className={styles.visualNote}>
-          [Tone: aspirational; show humans interacting seamlessly with devices, not screens]
+          [Tone: aspirational; show humans interacting seamlessly with devices,
+          not screens]
         </div>
       </div>
     </section>

@@ -15,7 +15,9 @@ export default function TechnologySection() {
           <div className={styles.step}>
             <div className={styles.stepNumber}>1</div>
             <h3 className={styles.stepTitle}>Perceive</h3>
-            <p className={styles.stepText}>Cameras, mics, spatial inputs sense surroundings.</p>
+            <p className={styles.stepText}>
+              Cameras, mics, spatial inputs sense surroundings.
+            </p>
           </div>
 
           <div className={styles.arrow}>→</div>
@@ -31,7 +33,9 @@ export default function TechnologySection() {
           <div className={styles.step}>
             <div className={styles.stepNumber}>3</div>
             <h3 className={styles.stepTitle}>Respond</h3>
-            <p className={styles.stepText}>Personalized audio/visual mentorship.</p>
+            <p className={styles.stepText}>
+              Personalized audio/visual mentorship.
+            </p>
           </div>
         </div>
 

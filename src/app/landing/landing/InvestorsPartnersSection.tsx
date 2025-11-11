@@ -12,7 +12,8 @@ export default function InvestorsPartnersSection() {
         </p>
 
         <div className={styles.content}>
-          We&apos;re working with educators, innovators, and believers who want to reshape how humans learn.
+          We&apos;re working with educators, innovators, and believers who want
+          to reshape how humans learn.
         </div>
 
         <div className={styles.buttons}>

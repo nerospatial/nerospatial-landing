@@ -14,7 +14,9 @@ export default function ImpactSection() {
         <div className={styles.stats}>
           <div className={styles.stat}>
             <div className={styles.statNumber}>90%</div>
-            <div className={styles.statText}>of learners lack contextual mentorship</div>
+            <div className={styles.statText}>
+              of learners lack contextual mentorship
+            </div>
           </div>
 
           <div className={styles.stat}>
@@ -33,9 +35,7 @@ export default function ImpactSection() {
           <button className={styles.secondaryButton}>See Our Research</button>
         </div>
 
-        <div className={styles.visualNote}>
-          [Stats & social proof elements]
-        </div>
+        <div className={styles.visualNote}>[Stats & social proof elements]</div>
       </div>
     </section>
   );

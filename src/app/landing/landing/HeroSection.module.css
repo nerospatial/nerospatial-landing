@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  height: 100vh;
+  height: 200vh; /* Extended to 200vh for parallax effect */
   width: 100%;
   overflow: hidden;
   margin: 0;
@@ -8,11 +8,11 @@
 }
 
 .heroContent {
-  position: absolute;
+  position: fixed; /* Changed to fixed so it stays in viewport */
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh; /* Full viewport height */
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -24,6 +24,10 @@
   color: var(--foreground);
   pointer-events: none;
   font-family: var(--font-primary);
+  will-change: transform, opacity; /* Optimize for animations */
+  transform-origin: center center; /* Scale from center */
+  perspective: 1000px; /* Add 3D perspective */
+  transform-style: preserve-3d; /* Enable 3D transforms */
 }
 
 .heroContent > * {

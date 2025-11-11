@@ -13,7 +13,6 @@ export default function PurposeSection() {
   const stampTextRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isHidden, setIsHidden] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [isTwoColumnLayout, setIsTwoColumnLayout] = useState(false);
 
   useEffect(() => {
@@ -359,17 +358,7 @@ export default function PurposeSection() {
     }
   }, [isHidden]);
 
-  const handleVideoClick = () => {
-    const iframe = iframeRef.current;
-    if (!iframe || isVideoPlaying) return;
-
-    // Add autoplay to iframe src
-    const currentSrc = iframe.src;
-    if (!currentSrc.includes("autoplay=1")) {
-      iframe.src = currentSrc + "&autoplay=1";
-      setIsVideoPlaying(true);
-    }
-  };
+  // No custom video controls; let YouTube UI handle playback
 
   return (
     <section ref={sectionRef} className={styles.section} data-section="purpose">
@@ -400,17 +389,10 @@ export default function PurposeSection() {
 
           {/* Right Column - Video */}
           <div ref={rightColumnRef} className={styles.rightColumn}>
-            <div className={styles.videoWrapper} onClick={handleVideoClick}>
-              {!isVideoPlaying && (
-                <div className={styles.playOverlay}>
-                  <div className={styles.playButton}>▶</div>
-                </div>
-              )}
+            <div className={styles.videoWrapper}>
               <iframe
                 ref={iframeRef}
-                width="560"
-                height="315"
-                src="https://www.youtube.com/embed/lXUZvyajciY?si=5XqJBJOZJH9FTJvE&amp;clip=Ugkxf4syWiYWekyEMRQMZk9T9xthR4ybT4Ch&amp;clipt=ELi46QMY0JTqAw"
+                src="https://www.youtube.com/embed/lXUZvyajciY?si=5XqJBJOZJH9FTJvE&amp;clip=Ugkxf4syWiYWekyEMRQMZk9T9xthR4ybT4Ch&amp;clipt=ELi46QMY0JTqAw&controls=1&modestbranding=1&rel=0&playsinline=1"
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

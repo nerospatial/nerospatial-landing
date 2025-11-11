@@ -18,14 +18,27 @@ export default function VisionSection() {
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
 
-      // Purpose section: starts at ~196vh (200vh * 0.98), spans 800vh
-      // Purpose section ends at: 196vh + 800vh = 996vh
-      const purposeStart = (200 * viewportHeight * 0.98) / 100;
-      const purposeFullHeight = (800 * viewportHeight) / 100;
-      const purposeEnd = purposeStart + purposeFullHeight;
+      // Compute Purpose section boundaries from the DOM for precise alignment
+      const purposeSection = document.querySelector(
+        'section[data-section="purpose"]'
+      ) as HTMLElement | null;
 
-      // Vision section starts AFTER Purpose section completes (not at 98% but at 100%)
-      const visionStart = purposeEnd;
+      let purposeEnd: number;
+      if (purposeSection) {
+        // Use bounding rect + scrollY for robust positioning regardless of layout/positioning contexts
+        const rect = purposeSection.getBoundingClientRect();
+        const purposeTop = rect.top + window.scrollY;
+        const purposeHeight = rect.height;
+        purposeEnd = purposeTop + purposeHeight; // End of Purpose section in px
+      } else {
+        // Fallback to previous assumptions if element not found
+        const purposeStart = (200 * viewportHeight * 0.98) / 100;
+        const purposeFullHeight = (800 * viewportHeight) / 100;
+        purposeEnd = purposeStart + purposeFullHeight;
+      }
+
+      // Vision section starts AFTER Purpose section completes (with a small buffer to avoid overlap)
+      const visionStart = purposeEnd + viewportHeight * 0.01; // 1vh buffer
       const visionEnd = visionStart + (300 * viewportHeight) / 100; // 300vh total for Vision section
 
       if (scrollY >= visionStart && scrollY <= visionEnd) {

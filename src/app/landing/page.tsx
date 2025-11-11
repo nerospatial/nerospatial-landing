@@ -26,9 +26,12 @@ export default function Landing() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const heroHeight = window.innerHeight; // 100vh - full viewport height
+      // Keep Aurora background visible throughout all sections
+      // Only fade it out at the very end of the page
+      const totalPageHeight = document.body.scrollHeight;
+      const fadeThreshold = totalPageHeight - window.innerHeight * 2; // Fade out 2 viewports before end
 
-      setIsAuroraFaded(scrollY > heroHeight);
+      setIsAuroraFaded(scrollY > fadeThreshold);
     };
 
     window.addEventListener("scroll", handleScroll);

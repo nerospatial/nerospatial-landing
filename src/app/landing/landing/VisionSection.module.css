@@ -1,16 +1,43 @@
 .section {
-  min-height: 100vh;
+  position: relative;
+  height: 300vh; /* Extended height for scroll space */
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
-  background: transparent;
+  background: transparent; /* Make background transparent to show Aurora */
 }
 
 .container {
-  max-width: 1000px;
+  width: 100%; /* Full width */
   text-align: center;
   color: #ffffff;
+  position: fixed; /* Fixed position to stay in viewport */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh; /* Full viewport height */
+  z-index: 30; /* Below Purpose (40) but above other content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  margin: 0;
+  pointer-events: none;
+  font-family: var(--font-primary);
+  will-change: transform, opacity; /* Optimize for future animations */
+  transform-origin: center center; /* Scale from center */
+  perspective: 1000px; /* Add 3D perspective */
+  transform-style: preserve-3d; /* Enable 3D transforms */
+  transition: none; /* Disable any CSS transitions that might interfere */
+
+  /* Initially invisible to prevent flash on page load */
+  opacity: 0;
+  visibility: hidden;
 }
 
 .title {
@@ -18,6 +45,7 @@
   font-weight: 700;
   margin-bottom: 2rem;
   color: #ffffff;
+  max-width: 900px; /* Limit max width for readability */
 }
 
 .description {
@@ -25,13 +53,17 @@
   line-height: 1.6;
   margin-bottom: 3rem;
   color: rgba(255, 255, 255, 0.9);
+  max-width: 700px; /* Limit max width for readability */
 }
 
 .subsections {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
+  width: 100%;
+  max-width: 1200px; /* Limit max width for readability */
+  padding: 0 2rem;
 }
 
 .subsection {

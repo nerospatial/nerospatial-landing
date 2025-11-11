@@ -43,6 +43,7 @@
 .title {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
+  font-family: var(--font-heading);
   margin-bottom: 2rem;
   color: #ffffff;
   max-width: 900px; /* Limit max width for readability */

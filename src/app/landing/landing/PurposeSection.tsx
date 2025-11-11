@@ -390,10 +390,12 @@ export default function PurposeSection() {
             }`}
           >
             <p className={styles.description}>
-              Humanity learned to scale content, not understanding.
+              In a world that mastered scaling information,
               <br />
-              We&apos;re here to scale mentorship — so every mind can reach its
-              potential.
+              we&apos;re pioneering the scaling of true mentorship.
+              <br />
+              <br />
+              Every mind deserves the guidance to unlock its full potential.
             </p>
           </div>
 
@@ -425,7 +427,7 @@ export default function PurposeSection() {
         <div ref={stampTextRef} className={styles.stampText}>
           <h2 className={styles.stampTitle}>Our Purpose</h2>
           <p className={styles.stampDescription}>
-            Enabling Personal Tutoring to everyone
+            Democratizing Personal Tutoring for Every Learner
           </p>
         </div>
       </div>

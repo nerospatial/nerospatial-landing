@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { SnackbarProvider } from "./core/hooks/useSnackbar";
 
 const inter = Inter({
   variable: "--font-primary",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -42,7 +48,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body
+        className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
+      >
         <SnackbarProvider>{children}</SnackbarProvider>
       </body>
     </html>

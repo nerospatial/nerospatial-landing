@@ -42,6 +42,7 @@
 .mainTitle {
   font-size: clamp(6rem, 18vw, 14rem);
   font-weight: 700;
+  font-family: var(--font-heading);
   background: linear-gradient(
     135deg,
     #ffffff 0%,

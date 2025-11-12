@@ -18,35 +18,34 @@ export default function VisionSection() {
       const scrollY = window.scrollY;
       const viewportHeight = window.innerHeight;
 
-      // Compute Purpose section boundaries from the DOM for precise alignment
-      const purposeSection = document.querySelector(
-        'section[data-section="purpose"]'
-      ) as HTMLElement | null;
+      // Use the same calculation as PurposeSection for consistency
+      // Purpose section starts at ~196vh (200vh * 0.98), spans 800vh
+      const purposeStart = (200 * viewportHeight * 0.98) / 100;
+      const purposeFullHeight = (800 * viewportHeight) / 100;
+      const purposeEnd = purposeStart + purposeFullHeight;
 
-      let purposeEnd: number;
-      if (purposeSection) {
-        // Use bounding rect + scrollY for robust positioning regardless of layout/positioning contexts
-        const rect = purposeSection.getBoundingClientRect();
-        const purposeTop = rect.top + window.scrollY;
-        const purposeHeight = rect.height;
-        purposeEnd = purposeTop + purposeHeight; // End of Purpose section in px
-      } else {
-        // Fallback to previous assumptions if element not found
-        const purposeStart = (200 * viewportHeight * 0.98) / 100;
-        const purposeFullHeight = (800 * viewportHeight) / 100;
-        purposeEnd = purposeStart + purposeFullHeight;
+      // Calculate Purpose progress to detect when phase 8 starts (90% progress)
+      let purposeProgress = 0;
+      if (scrollY >= purposeStart && scrollY <= purposeEnd) {
+        purposeProgress = (scrollY - purposeStart) / purposeFullHeight;
+      } else if (scrollY > purposeEnd) {
+        purposeProgress = 1;
       }
 
-      // Vision section starts AFTER Purpose section completes (with a small buffer to avoid overlap)
-      const visionStart = purposeEnd + viewportHeight * 0.01; // 1vh buffer
-      const visionEnd = visionStart + (300 * viewportHeight) / 100; // 300vh total for Vision section
+      // Vision section starts when Purpose phase 8 begins (at 90% progress)
+      // This allows smooth crossfade: Vision fades in as Purpose fades out
+      const visionStartProgress = 0.9; // Start when Purpose phase 8 begins
+      const visionStartScroll =
+        purposeStart + visionStartProgress * purposeFullHeight;
+      const visionEnd = visionStartScroll + (300 * viewportHeight) / 100; // 300vh total for Vision section
 
-      if (scrollY >= visionStart && scrollY <= visionEnd) {
+      if (scrollY >= visionStartScroll && scrollY <= visionEnd) {
         // Calculate progress through Vision section (0 to 1)
-        const progress = (scrollY - visionStart) / (visionEnd - visionStart);
+        const visionProgress =
+          (scrollY - visionStartScroll) / (visionEnd - visionStartScroll);
 
-        // Fade in over the first 10% of Vision section scroll
-        const fadeProgress = Math.min(progress * 10, 1); // 0 to 1 over 10% of section
+        // Fade in over the first 20% of Vision section scroll for smoother transition
+        const fadeProgress = Math.min(visionProgress * 5, 1); // 0 to 1 over 20% of section
 
         gsap.to(container, {
           opacity: fadeProgress,
@@ -62,14 +61,27 @@ export default function VisionSection() {
           duration: 0.1,
           ease: "none",
         });
-      } else if (scrollY < visionStart) {
-        // Completely invisible when still in Purpose section
-        gsap.to(container, {
-          opacity: 0,
-          visibility: "hidden",
-          duration: 0.1,
-          ease: "none",
-        });
+      } else if (scrollY < visionStartScroll) {
+        // Check if we're in Purpose phase 8 - if so, start very subtle fade-in
+        if (purposeProgress >= 0.9 && purposeProgress < 1) {
+          // Crossfade: Vision starts appearing as Purpose phase 8 progresses
+          const phase8Progress = (purposeProgress - 0.9) / 0.1; // 0 to 1 through phase 8
+          const earlyFade = phase8Progress * 0.3; // Subtle early fade (max 30% opacity)
+          gsap.to(container, {
+            opacity: earlyFade,
+            visibility: earlyFade > 0 ? "visible" : "hidden",
+            duration: 0.1,
+            ease: "none",
+          });
+        } else {
+          // Completely invisible when still in early Purpose phases
+          gsap.to(container, {
+            opacity: 0,
+            visibility: "hidden",
+            duration: 0.1,
+            ease: "none",
+          });
+        }
       }
     };
 

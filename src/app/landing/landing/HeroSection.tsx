@@ -14,6 +14,7 @@ export default function HeroSection() {
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     const hero = heroRef.current;
     const content = contentRef.current;
 
@@ -29,41 +30,61 @@ export default function HeroSection() {
       z: 0,
     });
 
-    // Create the animation
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: hero,
-        start: "top top",
-        end: "bottom top",
-        scrub: 0.5,
-        onUpdate: (self) => {
-          // When progress reaches 100% or near it
-          if (self.progress >= 0.98) {
-            if (!isHidden) {
-              setIsHidden(true);
+    if (isMobile) {
+      // Simple fade out on scroll for mobile; no heavy scaling
+      const onScroll = () => {
+        const rect = hero.getBoundingClientRect();
+        const viewport = window.innerHeight;
+        const progress = Math.min(
+          1,
+          Math.max(0, (viewport - Math.max(0, rect.top)) / (viewport * 0.8))
+        );
+        const opacity = 1 - progress;
+        content.style.opacity = String(opacity);
+        if (opacity <= 0.02 && !isHidden) setIsHidden(true);
+        else if (opacity > 0.02 && isHidden) setIsHidden(false);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+      };
+    } else {
+      // Desktop: keep ScrollTrigger zoom/fade
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: hero,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.5,
+          onUpdate: (self) => {
+            if (self.progress >= 0.98) {
+              if (!isHidden) {
+                setIsHidden(true);
+              }
+            } else if (self.progress < 0.98) {
+              if (isHidden) {
+                setIsHidden(false);
+              }
             }
-          } else if (self.progress < 0.98) {
-            if (isHidden) {
-              setIsHidden(false);
-            }
-          }
+          },
         },
-      },
-    });
+      });
 
-    tl.to(content, {
-      scale: 5.5,
-      opacity: 0,
-      z: 1000,
-      ease: "power2.inOut",
-    });
+      tl.to(content, {
+        scale: 5.5,
+        opacity: 0,
+        z: 1000,
+        ease: "power2.inOut",
+      });
 
-    scrollTriggerRef.current = tl.scrollTrigger as ScrollTrigger;
+      scrollTriggerRef.current = tl.scrollTrigger as ScrollTrigger;
 
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+      return () => {
+        tl.kill();
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      };
+    }
   }, [isHidden]);
 
   // Use a separate effect to handle the hiding

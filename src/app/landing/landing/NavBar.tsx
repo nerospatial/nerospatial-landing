@@ -8,12 +8,17 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    if (isMobile) {
+      // On mobile, show hamburger from the start
+      setIsScrolled(true);
+      return;
+    }
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const heroHeight = window.innerHeight; // Full viewport height
       setIsScrolled(scrollY > heroHeight * 0.8); // Switch to hamburger after 80% of hero
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

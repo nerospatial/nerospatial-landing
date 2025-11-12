@@ -20,7 +20,7 @@
   left: 0;
   right: 0;
   height: 100vh; /* Full viewport height */
-  z-index: 35; /* Between Purpose (40) and other sections but hidden until Purpose fades */
+  z-index: 45; /* Above Purpose (40) so it appears on top when Purpose fades out */
   display: flex;
   flex-direction: column;
   align-items: center;

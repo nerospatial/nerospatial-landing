@@ -12,136 +12,48 @@
 }
 
 .container {
-  width: 100%; /* Full width */
-  text-align: center;
+  width: 100%;
   color: #ffffff;
-  position: fixed; /* Fixed position to stay in viewport */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 100vh; /* Full viewport height */
-  z-index: 45; /* Above Purpose (40) so it appears on top when Purpose fades out */
+  height: 100vh;
+  z-index: 45;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   padding: 4rem;
   margin: 0;
   pointer-events: none;
   font-family: var(--font-primary);
-  will-change: transform, opacity; /* Optimize for future animations */
-  transform-origin: center center; /* Scale from center */
-  perspective: 1000px; /* Add 3D perspective */
-  transform-style: preserve-3d; /* Enable 3D transforms */
-  transition: none; /* Disable any CSS transitions that might interfere */
+  will-change: transform, opacity;
+  transition: none;
 
   /* Initially invisible to prevent flash on page load */
   opacity: 0;
   visibility: hidden;
 }
 
-.twoColumnLayout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  width: 100%;
-  max-width: 1400px;
-  align-items: center;
-}
-
-.leftColumn {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.arrow {
-  font-size: clamp(4rem, 8vw, 6rem);
-  font-weight: 900;
-  color: #ffffff;
-  opacity: 0.9;
-  animation: arrowPulse 2s ease-in-out infinite;
-  align-self: flex-end;
-  margin-top: 0.5rem;
-}
-
-@keyframes arrowPulse {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: translateX(0);
-  }
-  50% {
-    opacity: 1;
-    transform: translateX(5px);
-  }
-}
-
-.rightColumn {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .title {
-  font-size: clamp(4rem, 8vw, 6rem);
+  font-size: clamp(3rem, 6vw, 4.5rem);
   font-weight: 700;
   font-family: var(--font-heading);
   color: #ffffff;
   line-height: 1.1;
-  margin: 0;
+  margin: 0 0 3rem 0;
   text-align: left;
   letter-spacing: -0.02em;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  pointer-events: auto;
 }
 
-.description {
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  line-height: 1.6;
-  margin-bottom: 3rem;
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 700px; /* Limit max width for readability */
-}
-
-.subsections {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-bottom: 3rem;
+.menuWrapper {
   width: 100%;
-}
-
-.subsection {
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.subtitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #ffffff;
-}
-
-.subtext {
-  font-size: 1rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.visualNote {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-style: italic;
-  margin-top: 2rem;
-  text-align: left;
+  flex: 1;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Mobile responsiveness */
@@ -150,43 +62,12 @@
     padding: 2rem;
   }
 
-  .twoColumnLayout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .leftColumn {
-    align-items: center;
-    text-align: center;
-  }
-
-  .arrow {
-    font-size: clamp(3rem, 10vw, 4rem);
-    font-weight: 900;
-    align-self: flex-end;
-    margin-top: 0.5rem;
-  }
-
-  .rightColumn {
-    align-items: center;
-  }
-
   .title {
-    text-align: center;
-    font-size: clamp(3rem, 10vw, 4rem);
-    align-items: center;
+    font-size: clamp(2rem, 8vw, 3rem);
+    margin-bottom: 2rem;
   }
 
-  .subsections {
-    align-items: center;
-  }
-
-  .subsection {
+  .menuWrapper {
     width: 100%;
-    max-width: 400px;
-  }
-
-  .visualNote {
-    text-align: center;
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
+import FlowingMenu from "@/components/FlowingMenu";
 import styles from "./VisionSection.module.css";
 
 // Constants - matching PurposeSection
@@ -186,43 +187,28 @@ export default function VisionSection() {
   return (
     <section className={styles.section}>
       <div ref={containerRef} className={styles.container}>
-        <div className={styles.twoColumnLayout}>
-          <div className={styles.leftColumn}>
-            <h2 className={styles.title}>
-              We
-              <br />
-              are
-              <br />
-              Building<span className={styles.arrow}>⇒</span>
-            </h2>
-          </div>
-          <div className={styles.rightColumn}>
-            <div className={styles.subsections}>
-              <div className={styles.subsection}>
-                <h3 className={styles.subtitle}>Spatial Companions</h3>
-                <p className={styles.subtext}>
-                  AI that perceives the real world.
-                </p>
-              </div>
+        <h2 className={styles.title}>We are Building</h2>
 
-              <div className={styles.subsection}>
-                <h3 className={styles.subtitle}>Contextual Intelligence</h3>
-                <p className={styles.subtext}>
-                  Learns from your environment and behavior.
-                </p>
-              </div>
-
-              <div className={styles.subsection}>
-                <h3 className={styles.subtitle}>Personal Growth Ecosystem</h3>
-                <p className={styles.subtext}>Evolves with you over time.</p>
-              </div>
-            </div>
-
-            <div className={styles.visualNote}>
-              [Tone: aspirational; show humans interacting seamlessly with
-              devices, not screens]
-            </div>
-          </div>
+        <div className={styles.menuWrapper}>
+          <FlowingMenu
+            items={[
+              {
+                link: "#spatial-companions",
+                text: "Companions Aware of Your Surroundings",
+                image: "/assets/placeholder.jpg",
+              },
+              {
+                link: "#contextual-intelligence",
+                text: "Intelligence that Understands You",
+                image: "/assets/placeholder.jpg",
+              },
+              {
+                link: "#growth-ecosystem",
+                text: "Personal Learning Ecosystem",
+                image: "/assets/placeholder.jpg",
+              },
+            ]}
+          />
         </div>
       </div>
     </section>

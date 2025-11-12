@@ -50,7 +50,7 @@ export default function Landing() {
           >
             <Aurora
               colorStops={["#1e293b", "#334155", "#475569"]}
-              blend={0.6}
+              blend={0.5}
               amplitude={1.0}
               speed={0.5}
             />

@@ -4,12 +4,12 @@
 
 :root {
   /* Core Theme Colors - Dark Monochromatic with Blue Accents */
-  --background: #0a0a0a;
+  --background: #000000;
   --foreground: #fafafa;
-  --surface: #171717;
-  --surface-elevated: #1f1f1f;
-  --surface-variant: #2c2c2c;
-  --surface-overlay: rgba(59, 130, 246, 0.05);
+  --surface: #000000;
+  --surface-elevated: #000000;
+  --surface-variant: #000000;
+  --surface-overlay: #000000;
 
   /* Text Colors */
   --text-primary: #fafafa;
@@ -57,7 +57,7 @@
 @media (prefers-color-scheme: light) {
   :root {
     /* Force dark theme always */
-    --background: #0a0a0a;
+    --background: #000000;
     --foreground: #fafafa;
     --surface: #171717;
     --surface-elevated: #1f1f1f;

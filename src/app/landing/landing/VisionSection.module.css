@@ -25,7 +25,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 4rem;
   margin: 0;
   pointer-events: none;
   font-family: var(--font-primary);
@@ -40,13 +40,63 @@
   visibility: hidden;
 }
 
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  width: 100%;
+  max-width: 1400px;
+  align-items: center;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.arrow {
+  font-size: clamp(4rem, 8vw, 6rem);
+  font-weight: 900;
+  color: #ffffff;
+  opacity: 0.9;
+  animation: arrowPulse 2s ease-in-out infinite;
+  align-self: flex-end;
+  margin-top: 0.5rem;
+}
+
+@keyframes arrowPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(5px);
+  }
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .title {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(4rem, 8vw, 6rem);
   font-weight: 700;
   font-family: var(--font-heading);
-  margin-bottom: 2rem;
   color: #ffffff;
-  max-width: 900px; /* Limit max width for readability */
+  line-height: 1.1;
+  margin: 0;
+  text-align: left;
+  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .description {
@@ -58,13 +108,11 @@
 }
 
 .subsections {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
   margin-bottom: 3rem;
   width: 100%;
-  max-width: 1200px; /* Limit max width for readability */
-  padding: 0 2rem;
 }
 
 .subsection {
@@ -93,4 +141,52 @@
   color: rgba(255, 255, 255, 0.6);
   font-style: italic;
   margin-top: 2rem;
+  text-align: left;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
+
+  .twoColumnLayout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .leftColumn {
+    align-items: center;
+    text-align: center;
+  }
+
+  .arrow {
+    font-size: clamp(3rem, 10vw, 4rem);
+    font-weight: 900;
+    align-self: flex-end;
+    margin-top: 0.5rem;
+  }
+
+  .rightColumn {
+    align-items: center;
+  }
+
+  .title {
+    text-align: center;
+    font-size: clamp(3rem, 10vw, 4rem);
+    align-items: center;
+  }
+
+  .subsections {
+    align-items: center;
+  }
+
+  .subsection {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .visualNote {
+    text-align: center;
+  }
 }

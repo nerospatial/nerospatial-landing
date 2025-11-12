@@ -56,7 +56,8 @@ export default function VisionSection() {
         // Use the same calculation as PurposeSection for consistency
         // Purpose section starts at ~196vh (200vh * 0.98), spans 800vh
         const purposeStart =
-          (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) / 100;
+          (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) /
+          100;
         const purposeFullHeight = (PURPOSE_HEIGHT * viewportHeight) / 100;
         const purposeEnd = purposeStart + purposeFullHeight;
 
@@ -70,8 +71,10 @@ export default function VisionSection() {
 
         // Vision section starts when Purpose phase 8 begins (at 90% progress)
         // This allows smooth crossfade: Vision fades in as Purpose fades out
-        const visionStartScroll = purposeStart + PHASE_8_START * purposeFullHeight;
-        const visionEnd = visionStartScroll + (VISION_HEIGHT * viewportHeight) / 100;
+        const visionStartScroll =
+          purposeStart + PHASE_8_START * purposeFullHeight;
+        const visionEnd =
+          visionStartScroll + (VISION_HEIGHT * viewportHeight) / 100;
 
         // Skip animations if reduced motion is preferred
         if (reduceMotionRef.current) {
@@ -183,33 +186,43 @@ export default function VisionSection() {
   return (
     <section className={styles.section}>
       <div ref={containerRef} className={styles.container}>
-        <h2 className={styles.title}>Vision — What We&apos;re Building</h2>
-        <p className={styles.description}>
-          Explain what NeroSpatial is, but philosophically — not feature-wise.
-        </p>
-
-        <div className={styles.subsections}>
-          <div className={styles.subsection}>
-            <h3 className={styles.subtitle}>Spatial Companions</h3>
-            <p className={styles.subtext}>AI that perceives the real world.</p>
+        <div className={styles.twoColumnLayout}>
+          <div className={styles.leftColumn}>
+            <h2 className={styles.title}>
+              We
+              <br />
+              are
+              <br />
+              Building<span className={styles.arrow}>⇒</span>
+            </h2>
           </div>
+          <div className={styles.rightColumn}>
+            <div className={styles.subsections}>
+              <div className={styles.subsection}>
+                <h3 className={styles.subtitle}>Spatial Companions</h3>
+                <p className={styles.subtext}>
+                  AI that perceives the real world.
+                </p>
+              </div>
 
-          <div className={styles.subsection}>
-            <h3 className={styles.subtitle}>Contextual Intelligence</h3>
-            <p className={styles.subtext}>
-              Learns from your environment and behavior.
-            </p>
+              <div className={styles.subsection}>
+                <h3 className={styles.subtitle}>Contextual Intelligence</h3>
+                <p className={styles.subtext}>
+                  Learns from your environment and behavior.
+                </p>
+              </div>
+
+              <div className={styles.subsection}>
+                <h3 className={styles.subtitle}>Personal Growth Ecosystem</h3>
+                <p className={styles.subtext}>Evolves with you over time.</p>
+              </div>
+            </div>
+
+            <div className={styles.visualNote}>
+              [Tone: aspirational; show humans interacting seamlessly with
+              devices, not screens]
+            </div>
           </div>
-
-          <div className={styles.subsection}>
-            <h3 className={styles.subtitle}>Personal Growth Ecosystem</h3>
-            <p className={styles.subtext}>Evolves with you over time.</p>
-          </div>
-        </div>
-
-        <div className={styles.visualNote}>
-          [Tone: aspirational; show humans interacting seamlessly with devices,
-          not screens]
         </div>
       </div>
     </section>

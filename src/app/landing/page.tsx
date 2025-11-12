@@ -60,13 +60,13 @@ export default function Landing() {
           <div className={styles.landing}>
             <HeroSection />
             <PurposeSection />
-            <VisionSection />
-            <TechnologySection />
+            <VisionSection />   
+            {/* <TechnologySection />
             <ProductsSection />
             <ExperienceSection />
             <ImpactSection />
             <AboutUsSection />
-            <InvestorsPartnersSection />
+            <InvestorsPartnersSection /> */}
           </div>
         </>
       )}

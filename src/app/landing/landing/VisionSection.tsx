@@ -93,23 +93,32 @@ export default function VisionSection() {
             (scrollY - visionStartScroll) / (visionEnd - visionStartScroll);
 
           // Fade in over the first 20% of Vision section scroll for smoother transition
-          const fadeProgress = Math.min(
+          const fadeInProgress = Math.min(
             visionProgress / VISION_FADE_IN_DURATION,
             1
           ); // 0 to 1 over 20% of section
 
+          // Start fading out at 80% through Vision section
+          const fadeOutStart = 0.8;
+          let opacity = fadeInProgress;
+          if (visionProgress > fadeOutStart) {
+            const fadeOutProgress =
+              (visionProgress - fadeOutStart) / (1 - fadeOutStart);
+            opacity = Math.max(0, fadeInProgress * (1 - fadeOutProgress));
+          }
+
           const tween = gsap.to(container, {
-            opacity: fadeProgress,
-            visibility: fadeProgress > 0 ? "visible" : "hidden",
+            opacity: opacity,
+            visibility: opacity > 0 ? "visible" : "hidden",
             duration: 0.1,
             ease: "none",
           });
           if (tween) gsapAnimationsRef.current.push(tween);
         } else if (scrollY > visionEnd) {
-          // Fully visible after Vision section
+          // Completely invisible after Vision section ends
           const tween = gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
+            opacity: 0,
+            visibility: "hidden",
             duration: 0.1,
             ease: "none",
           });

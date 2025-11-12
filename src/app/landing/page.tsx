@@ -7,12 +7,8 @@ import HeroSection from "@/app/landing/landing/HeroSection";
 import NavBar from "@/app/landing/landing/NavBar";
 import PurposeSection from "@/app/landing/landing/PurposeSection";
 import VisionSection from "@/app/landing/landing/VisionSection";
-import TechnologySection from "@/app/landing/landing/TechnologySection";
 import ProductsSection from "@/app/landing/landing/ProductsSection";
-import ExperienceSection from "@/app/landing/landing/ExperienceSection";
-import ImpactSection from "@/app/landing/landing/ImpactSection";
-import AboutUsSection from "@/app/landing/landing/AboutUsSection";
-import InvestorsPartnersSection from "@/app/landing/landing/InvestorsPartnersSection";
+import TechnologySection from "@/app/landing/landing/TechnologySection";
 import styles from "./page.module.css";
 
 export default function Landing() {
@@ -60,10 +56,10 @@ export default function Landing() {
           <div className={styles.landing}>
             <HeroSection />
             <PurposeSection />
-            <VisionSection />   
-            {/* <TechnologySection />
+            <VisionSection />
             <ProductsSection />
-            <ExperienceSection />
+            <TechnologySection />
+            {/* <ExperienceSection />
             <ImpactSection />
             <AboutUsSection />
             <InvestorsPartnersSection /> */}

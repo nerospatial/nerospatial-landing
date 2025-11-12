@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
+import MagicBento from "@/components/MagicBento";
+import type { BentoCardProps } from "@/components/MagicBento";
 import styles from "./ProductsSection.module.css";
 
 // Constants - matching Vision/Purpose pattern
@@ -164,46 +166,70 @@ export default function ProductsSection() {
     return () => window.removeEventListener("resize", handleResize);
   }, [updateViewportCache]);
 
-  const products = [
+  // NeroSpatial product data for MagicBento
+  // NeroSpatial product data for MagicBento
+  const productCards: BentoCardProps[] = [
     {
-      name: "NeroCore",
-      tagline: "Audio-first smart glasses for everyday learners",
+      color: "#1e293b",
+      title: "NeroCore",
+      description: "Audio-first smart glasses for everyday learners",
+      label: "Audio AI",
+      image: "/assets/nerocore/hero.jpg",
     },
     {
-      name: "NeroGlance",
-      tagline: "AR glasses bringing concepts to life visually",
+      color: "#1e293b",
+      title: "NeroGlance",
+      description: "AR glasses bringing concepts to life visually",
+      label: "Visual AR",
+      image: "/assets/neroglance/hero.jpg",
     },
     {
-      name: "NeroDivine",
-      tagline: "AI toys teaching values through stories",
+      color: "#1e293b",
+      title: "NeroPersonas",
+      description: "Cloud AI mentors powering all NeroSpatial devices",
+      label: "AI Cloud",
+      image: "/assets/neropersonas/hero.jpg",
     },
     {
-      name: "NeroPersonas",
-      tagline: "Cloud AI mentors powering all NeroSpatial devices",
+      color: "#1e293b",
+      title: "NeroDivine",
+      description: "AI toys teaching values through stories",
+      label: "Learning",
+      image: "/assets/landing/hero.jpg",
+    },
+    {
+      color: "#1e293b",
+      title: "Godji",
+      description: "Spiritual AI companion for mindful growth",
+      label: "Spiritual",
+      image: "/assets/godji/hero.jpg",
+    },
+    {
+      color: "#1e293b",
+      title: "NeroOS",
+      description: "Unified operating system across all devices",
+      label: "Platform",
+      image: "/assets/landing/hero.jpg",
     },
   ];
 
   return (
     <section className={styles.section}>
       <div ref={containerRef} className={styles.container}>
-        <h2 className={styles.title}>Products — The Form Factors</h2>
-        <p className={styles.description}>
-          Ground the vision into real products. Show the ecosystem, not just
-          gadgets.
-        </p>
-
-        <div className={styles.productsGrid}>
-          {products.map((product, index) => (
-            <div key={index} className={styles.productCard}>
-              <h3 className={styles.productName}>{product.name}</h3>
-              <p className={styles.productTagline}>{product.tagline}</p>
-              <button className={styles.productLink}>Learn More →</button>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.visualNote}>
-          [Each card: clean render, short line, link → dedicated product page]
+        <h2 className={styles.title}>On the Shelf</h2>
+        <div className={styles.bentoWrapper}>
+          <MagicBento
+            cardData={productCards}
+            enableStars={false}
+            enableSpotlight={true}
+            enableBorderGlow={true}
+            enableTilt={true}
+            clickEffect={true}
+            enableMagnetism={true}
+            glowColor="96, 165, 250"
+            spotlightRadius={350}
+            textAutoHide={false}
+          />
         </div>
       </div>
     </section>

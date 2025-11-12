@@ -23,8 +23,8 @@
   z-index: 47; /* Above Vision (45) so it appears on top when Vision fades out */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
   padding: 4rem;
   margin: 0;
   pointer-events: none;
@@ -38,20 +38,33 @@
 }
 
 .title {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 700;
   font-family: var(--font-heading);
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   color: #ffffff;
+  pointer-events: auto;
+  text-align: center;
+  width: 100%;
+}
+
+.bentoWrapper {
+  width: 100%;
+  max-width: 1400px; /* Increased max-width for larger bento grid */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   pointer-events: auto;
 }
 
 .description {
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   line-height: 1.6;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem; /* Increased margin to create space between title and grid */
   color: rgba(255, 255, 255, 0.9);
   pointer-events: auto;
+  text-align: left; /* Align text to the left */
+  max-width: 600px; /* Limit width for better readability */
 }
 
 .productsGrid {

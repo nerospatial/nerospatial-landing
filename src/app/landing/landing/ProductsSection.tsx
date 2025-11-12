@@ -197,31 +197,18 @@ export default function ProductsSection() {
       label: "Learning",
       image: "/assets/landing/hero.jpg",
     },
-    {
-      color: "#1e293b",
-      title: "Godji",
-      description: "Spiritual AI companion for mindful growth",
-      label: "Spiritual",
-      image: "/assets/godji/hero.jpg",
-    },
-    {
-      color: "#1e293b",
-      title: "NeroOS",
-      description: "Unified operating system across all devices",
-      label: "Platform",
-      image: "/assets/landing/hero.jpg",
-    },
+   
   ];
 
   return (
     <section className={styles.section}>
       <div ref={containerRef} className={styles.container}>
-        <h2 className={styles.title}>On the Shelf</h2>
+        <h2 className={styles.title}>Product Shelf</h2>
         <div className={styles.bentoWrapper}>
           <MagicBento
             cardData={productCards}
             enableStars={false}
-            enableSpotlight={true}
+            enableSpotlight={false}
             enableBorderGlow={true}
             enableTilt={true}
             clickEffect={true}

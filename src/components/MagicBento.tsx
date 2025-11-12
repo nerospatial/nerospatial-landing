@@ -533,8 +533,14 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-3 p-4 max-w-[90rem] select-none relative"
-    style={{ fontSize: "clamp(1.2rem, 1rem + 0.8vw, 2rem)", width: "100%" }}
+    className="bento-section select-none relative"
+    style={{
+      fontSize: "clamp(1.2rem, 1rem + 0.8vw, 2rem)",
+      width: "100%",
+      maxWidth: "100%",
+      padding: "0",
+      margin: "0",
+    }}
     ref={gridRef}
   >
     {children}
@@ -594,36 +600,136 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .card-responsive {
+            display: grid;
             grid-template-columns: 1fr;
-            width: 90%;
-            margin: 0 auto;
-            padding: 0.5rem;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0;
+            margin: 0;
           }
           
           @media (min-width: 600px) {
             .card-responsive {
               grid-template-columns: repeat(2, 1fr);
+              gap: 1rem;
             }
           }
           
           @media (min-width: 1024px) {
+            /* Dynamic grid layout based on card count */
             .card-responsive {
-              grid-template-columns: repeat(4, 1fr);
+              grid-template-columns: repeat(6, 1fr);
+              grid-auto-rows: minmax(180px, auto);
+              gap: 1.25rem;
+              width: 100%;
+              max-width: 100%;
+              margin: 0;
+              padding: 0;
             }
             
-            .card-responsive .card:nth-child(3) {
+            /* Special layout for 6 cards - creative alternating heights */
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(1) {
+              grid-column: span 3;
+              grid-row: span 2;
+            }
+            
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(2) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(3) {
+              grid-column: span 1;
+              grid-row: span 2;
+            }
+            
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(4) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(5) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(6) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            /* 5 cards: Creative asymmetric layout */
+            .card-responsive:has(.card:nth-child(5):last-child) {
+              grid-template-columns: repeat(5, 1fr);
+              grid-auto-rows: minmax(200px, auto);
+            }
+            
+            .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(1) {
+              grid-column: span 3;
+              grid-row: span 2;
+            }
+            
+            .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(2) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(3) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(4) {
+              grid-column: span 3;
+              grid-row: span 1;
+            }
+            
+            .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(5) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            /* 4 cards: Creative masonry-style layout */
+            .card-responsive:has(.card:nth-child(4):last-child) {
+              grid-template-columns: repeat(4, 1fr);
+              grid-auto-rows: minmax(220px, auto);
+            }
+            
+            .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(1) {
               grid-column: span 2;
               grid-row: span 2;
             }
             
-            .card-responsive .card:nth-child(4) {
-              grid-column: 1 / span 2;
-              grid-row: 2 / span 2;
+            .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(2) {
+              grid-column: span 2;
+              grid-row: span 1;
             }
             
-            .card-responsive .card:nth-child(6) {
-              grid-column: 4;
-              grid-row: 3;
+            .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(3) {
+              grid-column: span 2;
+              grid-row: span 2;
+            }
+            
+            .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(4) {
+              grid-column: span 2;
+              grid-row: span 1;
+            }
+            
+            /* 3 cards: Use full width with simple grid */
+            .card-responsive:has(.card:nth-child(3):last-child) {
+              grid-template-columns: repeat(3, 1fr);
+            }
+            
+            /* 2 cards: Use full width, 2 columns */
+            .card-responsive:has(.card:nth-child(2):last-child) {
+              grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* 1 card: Centered single column */
+            .card-responsive:has(.card:nth-child(1):last-child) {
+              grid-template-columns: 1fr;
+              max-width: 600px;
+              margin: 0 auto;
             }
           }
           
@@ -717,7 +823,7 @@ const MagicBento: React.FC<BentoProps> = ({
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive grid gap-3">
           {cardData.map((card, index) => {
-            const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[280px] w-full max-w-full p-7 rounded-[24px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
+            const baseClassName = `card flex flex-col justify-between relative w-full max-w-full p-7 rounded-[24px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
               enableBorderGlow ? "card--border-glow" : ""
             }`;
 
@@ -733,6 +839,7 @@ const MagicBento: React.FC<BentoProps> = ({
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
+              minHeight: "100%",
             } as React.CSSProperties;
 
             if (enableStars) {

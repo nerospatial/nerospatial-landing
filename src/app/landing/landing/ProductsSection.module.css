@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  height: 300vh; /* Extended height for scroll space */
+  height: 300vh;
   width: 100%;
   overflow: hidden;
   margin: 0;
@@ -8,29 +8,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent; /* Make background transparent to show Aurora */
+  background: transparent;
 }
 
 .container {
   width: 100%;
-  text-align: center;
   color: #ffffff;
-  position: fixed; /* Fixed position to stay in viewport */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 100vh; /* Full viewport height */
-  z-index: 47; /* Above Vision (45) so it appears on top when Vision fades out */
+  height: 100vh;
+  z-index: 47;
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-  padding: 4rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
   margin: 0;
   pointer-events: none;
   font-family: var(--font-primary);
   will-change: transform, opacity;
   transition: none;
+  gap: 0;
 
   /* Initially invisible to prevent flash on page load */
   opacity: 0;
@@ -38,23 +38,47 @@
 }
 
 .title {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 700;
   font-family: var(--font-heading);
-  margin-bottom: 3rem;
   color: #ffffff;
   pointer-events: auto;
-  text-align: center;
-  width: 100%;
+  letter-spacing: 0.05em;
+
+  /* Vertical text styling */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+
+  /* Fixed width for title section */
+  flex: 0 0 12%;
+  min-width: 80px;
+  max-width: 150px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 1rem 0.5rem;
 }
 
 .bentoWrapper {
-  width: 100%;
-  max-width: 1400px; /* Increased max-width for larger bento grid */
+  /* Use remaining width */
+  flex: 1 1 auto;
+
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: auto;
+
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+
+  padding: 2rem 3rem 2rem 1rem;
+  margin: 0;
+  overflow: hidden;
 }
 
 .description {
@@ -134,6 +158,35 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .title {
+    flex: none;
+    width: 100%;
+    height: auto;
+    min-width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    transform: none;
+    font-size: clamp(2rem, 8vw, 2.5rem);
+    letter-spacing: 0.02em;
+  }
+
+  .bentoWrapper {
+    flex: none;
+    width: 100%;
+    height: auto;
+    padding: 0;
+  }
+
   .productsGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;

@@ -4,6 +4,27 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import styles from "./PurposeSection.module.css";
 
+// Constants
+const MOBILE_BREAKPOINT = 768;
+const PURPOSE_START_OFFSET = 200; // vh
+const PURPOSE_START_MULTIPLIER = 0.98;
+const PURPOSE_HEIGHT = 800; // vh
+const PHASE_1_END = 0.2;
+const PHASE_2_END = 0.4;
+const PHASE_3_END = 0.6;
+const PHASE_4_END = 0.7;
+const PHASE_5_END = 0.85;
+const PHASE_6_END = 0.875;
+const PHASE_7_END = 0.9;
+const PHASE_8_START = 0.9;
+const HIDE_THRESHOLD = 0.98;
+
+// Mobile phase constants
+const MOBILE_P1_END = 0.25;
+const MOBILE_P2_END = 0.5;
+const MOBILE_P3_END = 0.7;
+const MOBILE_FADEOUT_START = 0.8;
+
 export default function PurposeSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -12,7 +33,7 @@ export default function PurposeSection() {
   const rightColumnRef = useRef<HTMLDivElement>(null);
   const stampTextRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [isHidden, setIsHidden] = useState(false);
+  const isHiddenRef = useRef(false);
   const [isTwoColumnLayout, setIsTwoColumnLayout] = useState(false);
 
   // --- Phase snap helpers (desktop only) ---
@@ -25,29 +46,42 @@ export default function PurposeSection() {
   const recentTouchRef = useRef(false);
   const reduceMotionRef = useRef<boolean>(false);
 
-  const isDesktop = () =>
-    typeof window !== "undefined" && window.innerWidth >= 768;
+  // Cached values
+  const isMobileRef = useRef(false);
+  const viewportHeightRef = useRef(0);
+  const rafIdRef = useRef<number | null>(null);
+  const gsapAnimationsRef = useRef<gsap.core.Tween[]>([]);
 
-  const getPurposeBounds = () => {
+  const updateViewportCache = useCallback(() => {
+    if (typeof window === "undefined") return;
+    isMobileRef.current = window.innerWidth < MOBILE_BREAKPOINT;
+    viewportHeightRef.current = window.innerHeight;
+  }, []);
+
+  const isDesktop = useCallback(() => {
+    return typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT;
+  }, []);
+
+  const getPurposeBounds = useCallback(() => {
     const section = sectionRef.current;
     if (!section) return { top: 0, height: 0, end: 0 };
     const rect = section.getBoundingClientRect();
     const top = rect.top + window.scrollY;
     const height = section.offsetHeight;
     return { top, height, end: top + height };
-  };
+  }, []);
 
   const getProgress = useCallback(() => {
     const { top, height } = getPurposeBounds();
     if (height <= 0) return 0;
     const y = window.scrollY;
     return Math.min(1, Math.max(0, (y - top) / height));
-  }, []);
+  }, [getPurposeBounds]);
 
   const toScrollY = useCallback((progress: number) => {
     const { top, height } = getPurposeBounds();
     return Math.round(top + progress * height);
-  }, []);
+  }, [getPurposeBounds]);
 
   const findNextSnap = (dir: 1 | -1, current: number) => {
     const points = SNAP_POINTS.current;
@@ -63,6 +97,34 @@ export default function PurposeSection() {
       return 0;
     }
   };
+
+  // Kill all GSAP animations
+  const killAllAnimations = useCallback(() => {
+    gsapAnimationsRef.current.forEach((anim) => {
+      if (anim && anim.kill) anim.kill();
+    });
+    gsapAnimationsRef.current = [];
+  }, []);
+
+  // Batch GSAP animations
+  const batchAnimations = useCallback(
+    (animations: Array<() => gsap.core.Tween>) => {
+      if (reduceMotionRef.current) {
+        // For reduced motion, set final states immediately
+        animations.forEach((anim) => {
+          const tween = anim();
+          if (tween) {
+            tween.progress(1); // Jump to end
+            tween.kill();
+          }
+        });
+        return;
+      }
+      const tweens = animations.map((anim) => anim()).filter(Boolean);
+      gsapAnimationsRef.current.push(...tweens);
+    },
+    []
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -85,372 +147,463 @@ export default function PurposeSection() {
       clipPath: "inset(0 0 100% 0)",
     });
 
+    updateViewportCache();
+
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-      const isMobile = window.innerWidth < 768;
-
-      // Purpose section starts at ~196vh
-      const purposeStart = (200 * viewportHeight * 0.98) / 100;
-      const purposeEnd = purposeStart + (800 * viewportHeight) / 100;
-
-      if (scrollY >= purposeStart && scrollY <= purposeEnd) {
-        const progress = (scrollY - purposeStart) / (purposeEnd - purposeStart);
-
-        // Mobile: simplified condensed sequence (fade in/out)
-        if (isMobile) {
-          // container fade in/out
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // simple staged fades
-          const p1 = Math.min(progress / 0.25, 1); // 0-25%
-          const p2 =
-            progress > 0.25 ? Math.min((progress - 0.25) / 0.25, 1) : 0; // 25-50%
-          const p3 = progress > 0.5 ? Math.min((progress - 0.5) / 0.2, 1) : 0; // 50-70%
-          const fadeOut =
-            progress > 0.8 ? Math.min((progress - 0.8) / 0.2, 1) : 0; // 80-100%
-
-          gsap.to(pageTitle, {
-            opacity: 1 - fadeOut,
-            clipPath: `inset(0 0 ${100 - p1 * 100}% 0)`,
-            duration: 0.1,
-          });
-          gsap.to(leftColumn, {
-            opacity: 1 - fadeOut,
-            width: "100%",
-            clipPath: `inset(0 0 ${100 - p1 * 100}% 0)`,
-            duration: 0.1,
-          });
-          gsap.to(rightColumn, {
-            opacity: p2 * (1 - fadeOut),
-            width: "100%",
-            clipPath: `inset(0 0 ${100 - p2 * 100}% 0)`,
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: p3 * (1 - fadeOut),
-            scale: 1,
-            clipPath: `inset(0 0 ${100 - p3 * 100}% 0)`,
-            duration: 0.1,
-          });
-          return;
-        }
-
-        // Phase 1: Fade in only text in center, taking full width (0-20% of 800vh)
-        const phase1End = 0.2;
-        if (progress <= phase1End) {
-          const fadeInProgress = progress / phase1End;
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // Unfold page title from top to bottom
-          gsap.to(pageTitle, {
-            opacity: fadeInProgress,
-            clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
-            duration: 0.1,
-          });
-          // Unfold left column from top to bottom
-          gsap.to(leftColumn, {
-            opacity: fadeInProgress,
-            width: "800px",
-            clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
-            duration: 0.1,
-          });
-          // Right column exists but takes no space and is invisible
-          gsap.to(rightColumn, {
-            opacity: 0,
-            width: "0%",
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 0,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-          if (isHidden) setIsHidden(false);
-        }
-        // Phase 2: Shrink left container, expand right container space (20-40% of 800vh)
-        else if (progress <= 0.4) {
-          const phase2Progress = (progress - phase1End) / (0.4 - phase1End);
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-
-          // Keep page title visible
-          gsap.to(pageTitle, {
-            opacity: 1,
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-
-          // Enable two-column layout mode for left alignment
-          if (!isTwoColumnLayout) setIsTwoColumnLayout(true);
-
-          // Gradually shrink left column from 800px to 50%
-          gsap.to(leftColumn, {
-            opacity: 1,
-            width: "50%",
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-
-          // Gradually expand right column from 0% to 50% but keep invisible
-          const rightWidth = phase2Progress * 50;
-          gsap.to(rightColumn, {
-            opacity: 0,
-            width: `${rightWidth}%`,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 0,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-        }
-        // Phase 3: Fade in video in the right column (40-60% of 800vh)
-        else if (progress <= 0.6) {
-          const phase3Progress = (progress - 0.4) / (0.6 - 0.4);
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-
-          // Keep page title visible
-          gsap.to(pageTitle, {
-            opacity: 1,
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-
-          // Keep 50-50 layout
-          gsap.to(leftColumn, {
-            opacity: 1,
-            width: "50%",
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-
-          // Unfold video from top to bottom as it fades in
-          gsap.to(rightColumn, {
-            opacity: phase3Progress,
-            width: "50%",
-            clipPath: `inset(0 0 ${100 - phase3Progress * 100}% 0)`,
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 0,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-        }
-        // Phase 4: Hold both columns visible (60-70% of 800vh)
-        else if (progress <= 0.7) {
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // Keep page title visible
-          gsap.to(pageTitle, {
-            opacity: 1,
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-          gsap.to(leftColumn, {
-            opacity: 1,
-            width: "50%",
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-          gsap.to(rightColumn, {
-            opacity: 1,
-            width: "50%",
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 0,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-        }
-        // Phase 5: Fold up both columns AND page title (70-85% of 800vh)
-        else if (progress <= 0.85) {
-          const fadeOutProgress = (progress - 0.7) / 0.15;
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // Fold up page title from bottom to top
-          gsap.to(pageTitle, {
-            opacity: 1 - fadeOutProgress,
-            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
-            duration: 0.1,
-          });
-          // Fold up left column from bottom to top
-          gsap.to(leftColumn, {
-            opacity: 1 - fadeOutProgress,
-            width: "50%",
-            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
-            duration: 0.1,
-          });
-          // Fold up right column from bottom to top
-          gsap.to(rightColumn, {
-            opacity: 1 - fadeOutProgress,
-            width: "50%",
-            clipPath: `inset(0 0 0% ${fadeOutProgress * 100}%)`,
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 0,
-            clipPath: "inset(0 0 100% 0)",
-            duration: 0.1,
-          });
-        }
-        // Phase 6: Unfold "Our Purpose" text (85-87.5% of 800vh)
-        else if (progress <= 0.875) {
-          const stampProgress = (progress - 0.85) / 0.025;
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // Keep page title hidden
-          gsap.to(pageTitle, {
-            opacity: 0,
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          gsap.to(leftColumn, {
-            opacity: 0,
-            width: "50%",
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          gsap.to(rightColumn, {
-            opacity: 0,
-            width: "50%",
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          // Unfold stamp text from top to bottom
-          gsap.to(stampText, {
-            opacity: stampProgress,
-            scale: 1,
-            clipPath: `inset(0 0 ${100 - stampProgress * 100}% 0)`,
-            duration: 0.1,
-          });
-        }
-        // Phase 7: Hold stamp (87.5-90% of 800vh)
-        else if (progress <= 0.9) {
-          gsap.to(container, {
-            opacity: 1,
-            visibility: "visible",
-            duration: 0.1,
-          });
-          // Keep page title hidden
-          gsap.to(pageTitle, {
-            opacity: 0,
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          gsap.to(leftColumn, {
-            opacity: 0,
-            width: "50%",
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          gsap.to(rightColumn, {
-            opacity: 0,
-            width: "50%",
-            clipPath: "inset(0 0 0% 100%)",
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 1,
-            scale: 1,
-            clipPath: "inset(0 0 0% 0)",
-            duration: 0.1,
-          });
-        }
-        // Phase 8: Zoom out and fade to transition to Vision (90-100% of 800vh - 100vh dedicated to this phase)
-        else {
-          const zoomProgress = (progress - 0.9) / 0.1;
-          const scale = 1 + zoomProgress * 5;
-          const opacity = 1 - zoomProgress;
-
-          gsap.to(container, {
-            opacity: opacity,
-            visibility: opacity > 0 ? "visible" : "hidden",
-            duration: 0.1,
-          });
-          gsap.to(stampText, {
-            opacity: 1 - zoomProgress,
-            scale: scale,
-            duration: 0.1,
-          });
-
-          if (progress >= 0.98 && !isHidden) {
-            setIsHidden(true);
-          } else if (progress < 0.98 && isHidden) {
-            setIsHidden(false);
-          }
-        }
-      } else if (scrollY > purposeEnd) {
-        if (!isHidden) setIsHidden(true);
-        gsap.to(container, { opacity: 0, visibility: "hidden", duration: 0.1 });
-      } else if (scrollY < purposeStart) {
-        if (isHidden) setIsHidden(false);
-        gsap.to(container, {
-          opacity: 0,
-          visibility: "hidden",
-          duration: 0.1,
-        });
-        gsap.to(leftColumn, { opacity: 0, duration: 0.1 });
-        gsap.to(rightColumn, { opacity: 0, duration: 0.1 });
-        gsap.to(stampText, { opacity: 0, duration: 0.1 });
+      // Kill any pending animations from previous scroll
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
       }
+
+      rafIdRef.current = requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        updateViewportCache();
+        const viewportHeight = viewportHeightRef.current;
+        const isMobile = isMobileRef.current;
+
+        // Purpose section starts at ~196vh
+        const purposeStart =
+          (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) /
+          100;
+        const purposeEnd = purposeStart + (PURPOSE_HEIGHT * viewportHeight) / 100;
+
+        if (scrollY >= purposeStart && scrollY <= purposeEnd) {
+          // Ensure container is not hidden when within bounds
+          if (isHiddenRef.current) {
+            isHiddenRef.current = false;
+          }
+          const progress = (scrollY - purposeStart) / (purposeEnd - purposeStart);
+
+          // Mobile: simplified condensed sequence (fade in/out)
+          if (isMobile) {
+            const p1 = Math.min(progress / MOBILE_P1_END, 1); // 0-25%
+            const p2 =
+              progress > MOBILE_P1_END
+                ? Math.min((progress - MOBILE_P1_END) / (MOBILE_P2_END - MOBILE_P1_END), 1)
+                : 0; // 25-50%
+            const p3 =
+              progress > MOBILE_P2_END
+                ? Math.min((progress - MOBILE_P2_END) / (MOBILE_P3_END - MOBILE_P2_END), 1)
+                : 0; // 50-70%
+            const fadeOut =
+              progress > MOBILE_FADEOUT_START
+                ? Math.min((progress - MOBILE_FADEOUT_START) / (1 - MOBILE_FADEOUT_START), 1)
+                : 0; // 80-100%
+
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 1 - fadeOut,
+                  clipPath: `inset(0 0 ${100 - p1 * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 1 - fadeOut,
+                  width: "100%",
+                  clipPath: `inset(0 0 ${100 - p1 * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: p2 * (1 - fadeOut),
+                  width: "100%",
+                  clipPath: `inset(0 0 ${100 - p2 * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: p3 * (1 - fadeOut),
+                  scale: 1,
+                  clipPath: `inset(0 0 ${100 - p3 * 100}% 0)`,
+                  duration: 0.1,
+                }),
+            ]);
+            return;
+          }
+
+          // Desktop phases
+          // Phase 1: Fade in only text in center, taking full width (0-20% of 800vh)
+          if (progress <= PHASE_1_END) {
+            const fadeInProgress = progress / PHASE_1_END;
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: fadeInProgress,
+                  clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: fadeInProgress,
+                  width: "800px",
+                  clipPath: `inset(0 0 ${100 - fadeInProgress * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 0,
+                  width: "0%",
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+            if (isHiddenRef.current) isHiddenRef.current = false;
+          }
+          // Phase 2: Shrink left container, expand right container space (20-40% of 800vh)
+          else if (progress <= PHASE_2_END) {
+            const phase2Progress = (progress - PHASE_1_END) / (PHASE_2_END - PHASE_1_END);
+            if (!isTwoColumnLayout) setIsTwoColumnLayout(true);
+
+            const rightWidth = phase2Progress * 50;
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 1,
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 1,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 0,
+                  width: `${rightWidth}%`,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 3: Fade in video in the right column (40-60% of 800vh)
+          else if (progress <= PHASE_3_END) {
+            const phase3Progress = (progress - PHASE_2_END) / (PHASE_3_END - PHASE_2_END);
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 1,
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 1,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: phase3Progress,
+                  width: "50%",
+                  clipPath: `inset(0 0 ${100 - phase3Progress * 100}% 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 4: Hold both columns visible (60-70% of 800vh)
+          else if (progress <= PHASE_4_END) {
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 1,
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 1,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 1,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 5: Fold up both columns AND page title (70-85% of 800vh)
+          // FIXED: Now correctly folds from top (inset top value increases)
+          else if (progress <= PHASE_5_END) {
+            const fadeOutProgress = (progress - PHASE_4_END) / (PHASE_5_END - PHASE_4_END);
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 1 - fadeOutProgress,
+                  clipPath: `inset(${fadeOutProgress * 100}% 0 0 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 1 - fadeOutProgress,
+                  width: "50%",
+                  clipPath: `inset(${fadeOutProgress * 100}% 0 0 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 1 - fadeOutProgress,
+                  width: "50%",
+                  clipPath: `inset(${fadeOutProgress * 100}% 0 0 0)`,
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 100% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 6: Unfold "Our Purpose" text (85-87.5% of 800vh)
+          else if (progress <= PHASE_6_END) {
+            const stampProgress = (progress - PHASE_5_END) / (PHASE_6_END - PHASE_5_END);
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 0,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 0,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: stampProgress,
+                  scale: 1,
+                  clipPath: `inset(0 0 ${100 - stampProgress * 100}% 0)`,
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 7: Hold stamp (87.5-90% of 800vh)
+          else if (progress <= PHASE_7_END) {
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: 1,
+                  visibility: "visible",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(pageTitle, {
+                  opacity: 0,
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(leftColumn, {
+                  opacity: 0,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(rightColumn, {
+                  opacity: 0,
+                  width: "50%",
+                  clipPath: "inset(0 0 0% 100%)",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 1,
+                  scale: 1,
+                  clipPath: "inset(0 0 0% 0)",
+                  duration: 0.1,
+                }),
+            ]);
+          }
+          // Phase 8: Zoom out and fade to transition to Vision (90-100% of 800vh)
+          else {
+            const zoomProgress = (progress - PHASE_8_START) / (1 - PHASE_8_START);
+            const scale = 1 + zoomProgress * 5;
+            const opacity = 1 - zoomProgress;
+
+            batchAnimations([
+              () =>
+                gsap.to(container, {
+                  opacity: opacity,
+                  visibility: opacity > 0 ? "visible" : "hidden",
+                  duration: 0.1,
+                }),
+              () =>
+                gsap.to(stampText, {
+                  opacity: 1 - zoomProgress,
+                  scale: scale,
+                  duration: 0.1,
+                }),
+            ]);
+
+            if (progress >= HIDE_THRESHOLD && !isHiddenRef.current) {
+              isHiddenRef.current = true;
+            } else if (progress < HIDE_THRESHOLD && isHiddenRef.current) {
+              isHiddenRef.current = false;
+            }
+          }
+        } else if (scrollY > purposeEnd) {
+          if (!isHiddenRef.current) isHiddenRef.current = true;
+          batchAnimations([
+            () =>
+              gsap.to(container, {
+                opacity: 0,
+                visibility: "hidden",
+                duration: 0.1,
+              }),
+          ]);
+        } else if (scrollY < purposeStart) {
+          if (isHiddenRef.current) isHiddenRef.current = false;
+          batchAnimations([
+            () =>
+              gsap.to(container, {
+                opacity: 0,
+                visibility: "hidden",
+                duration: 0.1,
+              }),
+            () => gsap.to(leftColumn, { opacity: 0, duration: 0.1 }),
+            () => gsap.to(rightColumn, { opacity: 0, duration: 0.1 }),
+            () => gsap.to(stampText, { opacity: 0, duration: 0.1 }),
+          ]);
+        }
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isHidden, isTwoColumnLayout]);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+      killAllAnimations();
+    };
+  }, [updateViewportCache, batchAnimations, killAllAnimations]);
 
+  // Handle isHidden state for CSS - only apply when hidden, don't interfere with GSAP
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    if (isHidden) {
-      container.style.cssText = `
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        display: none !important;
-      `;
-    } else {
-      container.style.cssText = `
-        opacity: "";
-        visibility: "";
-        pointer-events: "";
-        display: "";
-      `;
-    }
-  }, [isHidden]);
+    let lastHiddenState = false;
 
-  // No custom video controls; let YouTube UI handle playback
+    const checkHidden = () => {
+      const currentHidden = isHiddenRef.current;
+      
+      // Only update if state changed
+      if (currentHidden !== lastHiddenState) {
+        lastHiddenState = currentHidden;
+        
+        if (currentHidden) {
+          // Force hide when needed
+          container.style.cssText = `
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            display: none !important;
+          `;
+        } else {
+          // Remove forced styles to let GSAP control visibility
+          container.style.removeProperty('opacity');
+          container.style.removeProperty('visibility');
+          container.style.removeProperty('pointer-events');
+          container.style.removeProperty('display');
+        }
+      }
+    };
+
+    // Check periodically (since we're using refs now)
+    const interval = setInterval(checkHidden, 100);
+    checkHidden();
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Accessibility and motion preference
   useEffect(() => {
@@ -473,6 +626,15 @@ export default function PurposeSection() {
     };
   }, []);
 
+  // Resize handler
+  useEffect(() => {
+    const handleResize = () => {
+      updateViewportCache();
+    };
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
+  }, [updateViewportCache]);
+
   // Strengthen guards and cleanup when leaving bounds
   useEffect(() => {
     if (!isDesktop() || reduceMotionRef.current) return;
@@ -487,7 +649,7 @@ export default function PurposeSection() {
     };
     window.addEventListener("scroll", onScrollBounds, { passive: true });
     return () => window.removeEventListener("scroll", onScrollBounds);
-  }, []);
+  }, [isDesktop, getPurposeBounds]);
 
   // Keyboard snapping within Purpose bounds
   useEffect(() => {
@@ -497,6 +659,8 @@ export default function PurposeSection() {
       if (recentTouchRef.current) return;
       const { top, end } = getPurposeBounds();
       const y = window.scrollY;
+      
+      // Allow free scrolling outside Purpose section bounds
       if (y < top || y > end) return;
 
       let dir: 1 | -1 | 0 = 0;
@@ -522,7 +686,26 @@ export default function PurposeSection() {
       }
 
       const current = getProgress();
+      
+      // Allow scrolling back to Hero if at start and scrolling up
+      if (dir === -1 && current <= 0.01) {
+        // Don't prevent default - allow normal scroll to Hero
+        return;
+      }
+      
+      // Allow scrolling forward to next section if at end and scrolling down
+      if (dir === 1 && current >= 0.99) {
+        // Don't prevent default - allow normal scroll to next section
+        return;
+      }
+      
       const targetProgress = findNextSnap(dir as 1 | -1, current);
+      
+      // If target is the same as current (already at snap point), allow normal scroll
+      if (Math.abs(targetProgress - current) < 0.01) {
+        return;
+      }
+      
       const targetY = toScrollY(targetProgress);
       isSnappingRef.current = true;
       pendingTargetRef.current = targetY;
@@ -535,7 +718,7 @@ export default function PurposeSection() {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [getProgress, toScrollY]);
+  }, [isDesktop, getProgress, toScrollY, getPurposeBounds]);
 
   // Wheel snapping within Purpose bounds
   useEffect(() => {
@@ -553,7 +736,10 @@ export default function PurposeSection() {
       const now = Date.now();
       const { top, end } = getPurposeBounds();
       const y = window.scrollY;
+      
+      // Allow free scrolling outside Purpose section bounds
       if (y < top || y > end) return;
+      
       if (Math.abs(e.deltaY) < 2) return;
       if (isSnappingRef.current && pendingTargetRef.current !== null) {
         e.preventDefault();
@@ -566,7 +752,26 @@ export default function PurposeSection() {
 
       const dir: 1 | -1 = e.deltaY > 0 ? 1 : -1;
       const current = getProgress();
+      
+      // Allow scrolling back to Hero if at start and scrolling up
+      if (dir === -1 && current <= 0.01) {
+        // Don't prevent default - allow normal scroll to Hero
+        return;
+      }
+      
+      // Allow scrolling forward to next section if at end and scrolling down
+      if (dir === 1 && current >= 0.99) {
+        // Don't prevent default - allow normal scroll to next section
+        return;
+      }
+      
       const targetProgress = findNextSnap(dir, current);
+      
+      // If target is the same as current (already at snap point), allow normal scroll
+      if (Math.abs(targetProgress - current) < 0.01) {
+        return;
+      }
+      
       const targetY = toScrollY(targetProgress);
       isSnappingRef.current = true;
       pendingTargetRef.current = targetY;
@@ -600,7 +805,7 @@ export default function PurposeSection() {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [getProgress, toScrollY]);
+  }, [isDesktop, getProgress, toScrollY, getPurposeBounds]);
 
   return (
     <section ref={sectionRef} className={styles.section} data-section="purpose">

@@ -45,15 +45,10 @@ export default function NavBar() {
   // Custom smooth scroll function with easing
   const smoothScrollTo = useCallback(
     (targetPosition: number, duration: number = 1000) => {
-      console.log(
-        `smoothScrollTo called - target: ${targetPosition}, duration: ${duration}`
-      );
       const startPosition =
         window.pageYOffset || document.documentElement.scrollTop;
       const distance = targetPosition - startPosition;
       let startTime: number | null = null;
-
-      console.log(`Start position: ${startPosition}, Distance: ${distance}`);
 
       const easeInOutQuad = (t: number): number => {
         return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -62,7 +57,6 @@ export default function NavBar() {
       const animation = (currentTime: number) => {
         if (startTime === null) {
           startTime = currentTime;
-          console.log("Animation started");
         }
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
@@ -75,20 +69,8 @@ export default function NavBar() {
         document.documentElement.scrollTop = newPosition;
         document.body.scrollTop = newPosition;
 
-        console.log(
-          `Progress: ${(progress * 100).toFixed(
-            1
-          )}%, Position: ${newPosition.toFixed(0)}, Actual: ${
-            window.pageYOffset
-          }`
-        );
-
         if (progress < 1) {
           requestAnimationFrame(animation);
-        } else {
-          console.log(
-            `Animation complete - final position: ${window.pageYOffset}`
-          );
         }
       };
 
@@ -98,13 +80,7 @@ export default function NavBar() {
   );
 
   const handleWaitlistClick = useCallback(() => {
-    console.log("=== WAITLIST BUTTON CLICKED ===");
-    console.log("Current page scroll:", window.pageYOffset);
-    console.log("Document height:", document.documentElement.scrollHeight);
-    console.log("Viewport height:", window.innerHeight);
-
     const productsSection = document.querySelector('[data-section="products"]');
-    console.log("Products section element:", productsSection);
 
     if (productsSection) {
       // Get accurate position relative to document
@@ -113,26 +89,8 @@ export default function NavBar() {
         window.pageYOffset || document.documentElement.scrollTop;
       const targetPosition = rect.top + scrollTop;
 
-      console.log("Section rect.top:", rect.top);
-      console.log("Current scroll position:", scrollTop);
-      console.log("Target scroll position:", targetPosition);
-      console.log("Distance to scroll:", targetPosition - scrollTop);
-
       // Force scroll with custom animation (more reliable)
-      console.log("Starting custom smooth scroll...");
       smoothScrollTo(targetPosition, 1200);
-    } else {
-      console.warn("Products section not found!");
-      // Fallback: try to find by any means
-      const allSections = document.querySelectorAll("section");
-      console.log("All sections found:", allSections.length);
-      allSections.forEach((section, index) => {
-        console.log(
-          `Section ${index}:`,
-          section.className,
-          section.getAttribute("data-section")
-        );
-      });
     }
   }, [smoothScrollTo]);
 

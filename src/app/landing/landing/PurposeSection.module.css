@@ -97,10 +97,22 @@
   width: 100%;
   max-width: 700px;
   cursor: default;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 16 / 9; /* Ensure 16:9 aspect ratio */
+  /* Fallback for older browsers */
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625) */
+  height: 0;
+  overflow: hidden;
+}
+
+/* Modern browsers with aspect-ratio support */
+@supports (aspect-ratio: 16 / 9) {
+  .videoWrapper {
+    aspect-ratio: 16 / 9;
+    padding-bottom: 0;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .stampText {
@@ -119,11 +131,20 @@
 }
 
 .iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   pointer-events: auto; /* Allow interaction with native YouTube controls */
+}
+
+@supports (aspect-ratio: 16 / 9) {
+  .iframe {
+    position: relative;
+  }
 }
 
 .title {
@@ -162,7 +183,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 968px) {
+@media (max-width: 768px) {
   .container {
     padding: 2rem;
     gap: 2rem;

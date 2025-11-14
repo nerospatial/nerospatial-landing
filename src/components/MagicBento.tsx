@@ -9,6 +9,7 @@ export interface BentoCardProps {
   textAutoHide?: boolean;
   disableAnimations?: boolean;
   image?: string;
+  isSellable?: boolean;
 }
 
 export interface BentoProps {
@@ -793,6 +794,83 @@ const MagicBento: React.FC<BentoProps> = ({
             overflow: hidden;
             text-overflow: ellipsis;
           }
+
+          /* Hover overlay styles */
+          .card__default-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: opacity 0.4s ease;
+            z-index: 10;
+          }
+
+          .card:hover .card__default-content {
+            opacity: 0;
+          }
+
+          .card__hover-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 20;
+            padding: 2rem;
+          }
+
+          .card:hover .card__hover-overlay {
+            opacity: 1;
+          }
+
+          .card__hover-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 90%;
+          }
+
+          .card__hover-title {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+          }
+
+          .card__hover-description {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+          }
+
+          .card__coming-soon-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(96, 165, 250, 0.1));
+            border: 2px solid rgba(96, 165, 250, 0.6);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+          }
+
+          .card__coming-soon-btn:hover {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(96, 165, 250, 0.2));
+            border-color: rgba(96, 165, 250, 0.9);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+          }
           
           @media (max-width: 599px) {
             .card-responsive {
@@ -861,26 +939,37 @@ const MagicBento: React.FC<BentoProps> = ({
                       style={{ pointerEvents: "none" }}
                     />
                   )}
-                  <div className="card__header flex justify-between gap-3 relative text-white z-10">
-                    <span className="card__label text-lg font-medium">
-                      {card.label}
-                    </span>
+
+                  {/* Default state: Label, Title and Description */}
+                  <div className="card__default-content">
+                    <div className="card__header flex justify-between gap-3 relative text-white z-10">
+                      <span className="card__label text-lg font-medium">
+                        {card.label}
+                      </span>
+                    </div>
+                    <div className="card__content flex flex-col relative text-white z-10">
+                      <h3 className="card__title font-semibold text-xl m-0 mb-2">
+                        {card.title}
+                      </h3>
+                      <p className="card__description text-base leading-6 opacity-90">
+                        {card.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="card__content flex flex-col relative text-white z-10">
-                    <h3
-                      className={`card__title font-semibold text-xl m-0 mb-2 ${
-                        textAutoHide ? "text-clamp-1" : ""
-                      }`}
-                    >
-                      {card.title}
-                    </h3>
-                    <p
-                      className={`card__description text-base leading-6 opacity-90 ${
-                        textAutoHide ? "text-clamp-2" : ""
-                      }`}
-                    >
-                      {card.description}
-                    </p>
+
+                  {/* Hover overlay: Title, Description, and Coming Soon button */}
+                  <div className="card__hover-overlay">
+                    <div className="card__hover-content">
+                      <h3 className="card__hover-title">{card.title}</h3>
+                      <p className="card__hover-description">
+                        {card.description}
+                      </p>
+                      {card.isSellable && (
+                        <button className="card__coming-soon-btn">
+                          Coming Soon
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </ParticleCard>
               );
@@ -894,26 +983,37 @@ const MagicBento: React.FC<BentoProps> = ({
                     style={{ pointerEvents: "none" }}
                   />
                 )}
-                <div className="card__header flex justify-between gap-3 relative text-white z-10">
-                  <span className="card__label text-lg font-medium">
-                    {card.label}
-                  </span>
+
+                {/* Default state: Label, Title and Description */}
+                <div className="card__default-content">
+                  <div className="card__header flex justify-between gap-3 relative text-white z-10">
+                    <span className="card__label text-lg font-medium">
+                      {card.label}
+                    </span>
+                  </div>
+                  <div className="card__content flex flex-col relative text-white z-10">
+                    <h3 className="card__title font-semibold text-xl m-0 mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="card__description text-base leading-6 opacity-90">
+                      {card.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="card__content flex flex-col relative text-white z-10">
-                  <h3
-                    className={`card__title font-semibold text-xl m-0 mb-2 ${
-                      textAutoHide ? "text-clamp-1" : ""
-                    }`}
-                  >
-                    {card.title}
-                  </h3>
-                  <p
-                    className={`card__description text-base leading-6 opacity-90 ${
-                      textAutoHide ? "text-clamp-2" : ""
-                    }`}
-                  >
-                    {card.description}
-                  </p>
+
+                {/* Hover overlay: Title, Description, and Coming Soon button */}
+                <div className="card__hover-overlay">
+                  <div className="card__hover-content">
+                    <h3 className="card__hover-title">{card.title}</h3>
+                    <p className="card__hover-description">
+                      {card.description}
+                    </p>
+                    {card.isSellable && (
+                      <button className="card__coming-soon-btn">
+                        Coming Soon
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

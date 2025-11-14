@@ -637,6 +637,8 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(2) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(3) {
@@ -647,16 +649,22 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(4) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(5) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(6):last-child) .card:nth-child(6) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             /* 5 cards: Creative asymmetric layout */
@@ -673,11 +681,15 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(2) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(3) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(4) {
@@ -688,6 +700,8 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(5):last-child) .card:nth-child(5) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 60% !important;
+              background-position: right center !important;
             }
             
             /* 4 cards: Creative masonry-style layout */
@@ -704,6 +718,8 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(2) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 40% !important;
+              background-position: right center !important;
             }
             
             .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(3) {
@@ -714,6 +730,8 @@ const MagicBento: React.FC<BentoProps> = ({
             .card-responsive:has(.card:nth-child(4):last-child) .card:nth-child(4) {
               grid-column: span 2;
               grid-row: span 1;
+              background-size: 40% !important;
+              background-position: right center !important;
             }
             
             /* 3 cards: Use full width with simple grid */

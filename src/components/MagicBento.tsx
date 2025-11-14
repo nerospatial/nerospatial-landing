@@ -836,7 +836,7 @@ const MagicBento: React.FC<BentoProps> = ({
               "--glow-intensity": "0",
               "--glow-radius": "200px",
               backgroundImage: card.image ? `url(${card.image})` : undefined,
-              backgroundSize: "cover",
+              backgroundSize: "80%",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
               minHeight: "100%",

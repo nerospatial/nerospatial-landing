@@ -171,6 +171,13 @@ export default function ProductsSection() {
   const productCards: BentoCardProps[] = [
     {
       color: "#1e293b",
+      title: "NeroDivine",
+      description: "AI toys teaching values through stories",
+      label: "Learning",
+      image: "/assets/landing/toy_image-nobg.png",
+    },
+    {
+      color: "#1e293b",
       title: "NeroCore",
       description: "Audio-first smart glasses for everyday learners",
       label: "Audio AI",
@@ -181,7 +188,7 @@ export default function ProductsSection() {
       title: "NeroGlance",
       description: "AR glasses bringing concepts to life visually",
       label: "Visual AR",
-      image: "/assets/neroglance/hero.jpg",
+      image: "/assets/landing/glasses.png",
     },
     {
       color: "#1e293b",
@@ -190,14 +197,6 @@ export default function ProductsSection() {
       label: "AI Cloud",
       image: "/assets/neropersonas/hero.jpg",
     },
-    {
-      color: "#1e293b",
-      title: "NeroDivine",
-      description: "AI toys teaching values through stories",
-      label: "Learning",
-      image: "/assets/landing/hero.jpg",
-    },
-   
   ];
 
   return (

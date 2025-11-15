@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Loader from "../core/components/Loader";
 import Aurora from "@/components/Aurora";
 import HeroSection from "@/app/landing/landing/HeroSection";
@@ -13,37 +13,17 @@ import styles from "./page.module.css";
 
 export default function Landing() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isAuroraFaded, setIsAuroraFaded] = useState(false);
 
   const handleLoaderComplete = () => {
     setIsLoaded(true);
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      // Keep Aurora background visible throughout all sections
-      // Only fade it out at the very end of the page
-      const totalPageHeight = document.body.scrollHeight;
-      const fadeThreshold = totalPageHeight - window.innerHeight * 2; // Fade out 2 viewports before end
-
-      setIsAuroraFaded(scrollY > fadeThreshold);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <>
       <Loader onComplete={handleLoaderComplete} />
       {isLoaded && (
         <>
-          <div
-            className={`${styles.auroraBackground} ${
-              isAuroraFaded ? styles.faded : ""
-            }`}
-          >
+          <div className={styles.auroraBackground}>
             <Aurora
               colorStops={["#1e293b", "#334155", "#475569"]}
               blend={0.5}
@@ -59,10 +39,6 @@ export default function Landing() {
             <VisionSection />
             <ProductsSection />
             <TechnologySection />
-            {/* <ExperienceSection />
-            <ImpactSection />
-            <AboutUsSection />
-            <InvestorsPartnersSection /> */}
           </div>
         </>
       )}

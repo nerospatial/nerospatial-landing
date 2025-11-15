@@ -10,19 +10,27 @@ const PURPOSE_START_MULTIPLIER = 0.98;
 const PURPOSE_HEIGHT = 800; // vh
 const VISION_HEIGHT = 300; // vh
 const PRODUCTS_HEIGHT = 300; // vh
-const TECHNOLOGY_HEIGHT = 300; // vh
-const TECHNOLOGY_FADE_IN_DURATION = 0.2; // 20% of section for fade in
+const TECHNOLOGY_HEIGHT = 800; // vh
+const TECHNOLOGY_FADE_IN_DURATION = 0.1; // 10% of section for fade in
+const TITLE_ANIMATION_DURATION = 0.25; // 25% of section for title animation (0 to 0.25)
+const CARDS_ANIMATION_START = 0.25; // Cards start animating at 25% of section
 
 export default function TechnologySection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const cardsWrapperRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafIdRef = useRef<number | null>(null);
   const gsapAnimationsRef = useRef<gsap.core.Tween[]>([]);
   const reduceMotionRef = useRef<boolean>(false);
   const viewportHeightRef = useRef(0);
+  const viewportWidthRef = useRef(0);
 
   const updateViewportCache = useCallback(() => {
     if (typeof window === "undefined") return;
     viewportHeightRef.current = window.innerHeight;
+    viewportWidthRef.current = window.innerWidth;
   }, []);
 
   // Kill all GSAP animations
@@ -52,6 +60,7 @@ export default function TechnologySection() {
         const scrollY = window.scrollY;
         updateViewportCache();
         const viewportHeight = viewportHeightRef.current;
+        const viewportWidth = viewportWidthRef.current;
 
         // Calculate Purpose section bounds
         const purposeStart =
@@ -78,6 +87,20 @@ export default function TechnologySection() {
         if (reduceMotionRef.current) {
           if (scrollY >= technologyStartScroll) {
             gsap.set(container, { opacity: 1, visibility: "visible" });
+            const titleWidth = viewportWidth * 0.12;
+            const spacerLeft = titleWidth / 2;
+            const targetX = -viewportWidth / 2 + spacerLeft;
+            gsap.set(titleRef.current, {
+              opacity: 1,
+              visibility: "visible",
+              x: targetX,
+              rotation: -90,
+              transformOrigin: "center center",
+            });
+            gsap.set(cardsWrapperRef.current, {
+              opacity: 1,
+              visibility: "visible",
+            });
           } else {
             gsap.set(container, { opacity: 0, visibility: "hidden" });
           }
@@ -90,35 +113,145 @@ export default function TechnologySection() {
             (scrollY - technologyStartScroll) /
             (technologyEnd - technologyStartScroll);
 
-          // Fade in over the first 20% of Technology section scroll
+          // Fade in over the first 10% of Technology section scroll
           const fadeProgress = Math.min(
             technologyProgress / TECHNOLOGY_FADE_IN_DURATION,
             1
           );
 
-          const tween = gsap.to(container, {
+          gsap.set(container, {
             opacity: fadeProgress,
             visibility: fadeProgress > 0 ? "visible" : "hidden",
-            duration: 0.1,
           });
 
-          gsapAnimationsRef.current.push(tween);
+          // Phase 1: Title animation (0 to 25% of section) - from center to left with rotation
+          if (technologyProgress <= TITLE_ANIMATION_DURATION) {
+            const titleProgress = technologyProgress / TITLE_ANIMATION_DURATION;
+            
+            // Calculate target position: move from center to left edge of spacer
+            // Title starts centered (50% of viewport), moves to left edge of spacer (12% from left)
+            const titleWidth = viewportWidth * 0.12; // 12% of viewport
+            const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
+            const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
+            
+            // Animate: fade in, rotate -90°, and translate to left
+            gsap.set(titleRef.current, {
+              opacity: titleProgress,
+              visibility: titleProgress > 0 ? "visible" : "hidden",
+              x: titleProgress * targetX,
+              rotation: titleProgress * -90,
+              transformOrigin: "center center",
+            });
+          } else {
+            // Lock title in final state
+            const titleWidth = viewportWidth * 0.12;
+            const spacerLeft = titleWidth / 2;
+            const targetX = -viewportWidth / 2 + spacerLeft;
+            gsap.set(titleRef.current, {
+              opacity: 1,
+              visibility: "visible",
+              x: targetX,
+              rotation: -90,
+              transformOrigin: "center center",
+            });
+          }
+
+          // Phase 2: Cards animation (25% to end of section)
+          if (technologyProgress >= CARDS_ANIMATION_START) {
+            const cardsProgress =
+              (technologyProgress - CARDS_ANIMATION_START) /
+              (1 - CARDS_ANIMATION_START);
+
+            // Fade in cards wrapper
+            gsap.set(cardsWrapperRef.current, {
+              opacity: Math.min(cardsProgress * 3, 1), // Quick fade in
+              visibility: "visible",
+            });
+
+            // Sequential card animations - cards animate in place (no movement)
+            const cardDuration = 1 / 6; // Each card takes 1/6 of the remaining animation time
+
+            cardRefs.current.forEach((card, index) => {
+              if (!card) return;
+
+              const cardStart = index * cardDuration;
+              const cardEnd = (index + 1) * cardDuration;
+
+              if (cardsProgress >= cardStart && cardsProgress <= cardEnd) {
+                const cardProgress = (cardsProgress - cardStart) / cardDuration;
+                // Stamp effect: scale from 0.8 to 1.0, fade in opacity
+                const stampProgress = Math.min(cardProgress / 0.5, 1); // Stamp in first 50%
+                const scaleValue = 0.8 + (1 - 0.8) * stampProgress; // Scale from 0.8 to 1.0
+                const opacityValue = stampProgress;
+
+                gsap.set(card, {
+                  opacity: opacityValue,
+                  visibility: "visible",
+                  scale: scaleValue,
+                });
+              } else if (cardsProgress < cardStart) {
+                // Before this card's animation starts
+                gsap.set(card, {
+                  opacity: 0,
+                  visibility: "hidden",
+                  scale: 0.8,
+                });
+              } else {
+                // After this card's animation completes - lock in final state
+                gsap.set(card, {
+                  opacity: 1,
+                  visibility: "visible",
+                  scale: 1,
+                });
+              }
+            });
+          } else {
+            // Hide cards before animation starts
+            gsap.set(cardsWrapperRef.current, {
+              opacity: 0,
+              visibility: "hidden",
+            });
+            // Reset all cards to initial state
+            cardRefs.current.forEach((card) => {
+              if (card) {
+                gsap.set(card, {
+                  opacity: 0,
+                  visibility: "hidden",
+                  scale: 0.8,
+                });
+              }
+            });
+          }
         } else if (scrollY < technologyStartScroll) {
           // Before Technology section
-          const tween = gsap.to(container, {
-            opacity: 0,
-            visibility: "hidden",
-            duration: 0.1,
-          });
-          gsapAnimationsRef.current.push(tween);
+          gsap.set(container, { opacity: 0, visibility: "hidden" });
         } else if (scrollY > technologyEnd) {
-          // After Technology section - keep visible or fade out for next section
-          const tween = gsap.to(container, {
+          // After Technology section - keep final state
+          gsap.set(container, { opacity: 1, visibility: "visible" });
+          const titleWidth = viewportWidth * 0.12;
+          const spacerLeft = titleWidth / 2;
+          const targetX = -viewportWidth / 2 + spacerLeft;
+          gsap.set(titleRef.current, {
             opacity: 1,
             visibility: "visible",
-            duration: 0.1,
+            x: targetX,
+            rotation: -90,
+            transformOrigin: "center center",
           });
-          gsapAnimationsRef.current.push(tween);
+          gsap.set(cardsWrapperRef.current, {
+            opacity: 1,
+            visibility: "visible",
+          });
+          // Ensure all cards are in final state
+          cardRefs.current.forEach((card) => {
+            if (card) {
+              gsap.set(card, {
+                opacity: 1,
+                visibility: "visible",
+                scale: 1,
+              });
+            }
+          });
         }
       });
     };
@@ -145,44 +278,48 @@ export default function TechnologySection() {
     return () => window.removeEventListener("resize", handleResize);
   }, [updateViewportCache]);
 
+  // Accessibility and motion preference
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateReduce = () => {
+      reduceMotionRef.current = media.matches;
+    };
+    if (media.addEventListener) {
+      media.addEventListener("change", updateReduce);
+    } else {
+      media.addListener(updateReduce);
+    }
+    updateReduce();
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener("change", updateReduce);
+      } else {
+        media.removeListener(updateReduce);
+      }
+    };
+  }, []);
+
   return (
     <section className={styles.section}>
       <div ref={containerRef} className={styles.container}>
-        <h2 className={styles.title}>Technology — How It Works (High-Level)</h2>
-        <p className={styles.description}>
-          Show intellectual depth, but remain approachable.
-        </p>
-
-        <div className={styles.flow}>
-          <div className={styles.step}>
-            <div className={styles.stepNumber}>1</div>
-            <h3 className={styles.stepTitle}>Perceive</h3>
-            <p className={styles.stepText}>
-              Cameras, mics, spatial inputs sense surroundings.
-            </p>
+        <div className={styles.titleSpacer}></div>
+        <h2 ref={titleRef} className={styles.title}>
+          How It Works
+        </h2>
+        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
+          <div ref={cardsContainerRef} className={styles.cardsContainer}>
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                ref={(el) => {
+                  cardRefs.current[i] = el;
+                }}
+                className={styles.card}
+              >
+                Card {i + 1}
+              </div>
+            ))}
           </div>
-
-          <div className={styles.arrow}>→</div>
-
-          <div className={styles.step}>
-            <div className={styles.stepNumber}>2</div>
-            <h3 className={styles.stepTitle}>Understand</h3>
-            <p className={styles.stepText}>AI contextualizes your world.</p>
-          </div>
-
-          <div className={styles.arrow}>→</div>
-
-          <div className={styles.step}>
-            <div className={styles.stepNumber}>3</div>
-            <h3 className={styles.stepTitle}>Respond</h3>
-            <p className={styles.stepText}>
-              Personalized audio/visual mentorship.
-            </p>
-          </div>
-        </div>
-
-        <div className={styles.visualNote}>
-          [Visual: animated schematic (simple geometric shapes, minimal text)]
         </div>
       </div>
     </section>

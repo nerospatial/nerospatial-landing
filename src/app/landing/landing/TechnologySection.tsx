@@ -15,6 +15,40 @@ const TECHNOLOGY_FADE_IN_DURATION = 0.1; // 10% of section for fade in
 const TITLE_ANIMATION_DURATION = 0.25; // 25% of section for title animation (0 to 0.25)
 const CARDS_ANIMATION_START = 0.25; // Cards start animating at 25% of section
 
+// Technology process data
+const technologySteps = [
+  {
+    id: 1,
+    shortTitle: "Wake Up",
+    hoverTitle: "Human Interaction Activation",
+  },
+  {
+    id: 2,
+    shortTitle: "Sense",
+    hoverTitle: "Real-time Audio & Video Capture",
+  },
+  {
+    id: 3,
+    shortTitle: "Understand",
+    hoverTitle: "Cloud Spatial Intelligence",
+  },
+  {
+    id: 4,
+    shortTitle: "Personalize",
+    hoverTitle: "Memory & Context Layer",
+  },
+  {
+    id: 5,
+    shortTitle: "Respond",
+    hoverTitle: "Multimodal Real-time Output",
+  },
+  {
+    id: 6,
+    shortTitle: "Evolve",
+    hoverTitle: "Continuous Learning & Growth",
+  },
+];
+
 export default function TechnologySection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -127,13 +161,13 @@ export default function TechnologySection() {
           // Phase 1: Title animation (0 to 25% of section) - from center to left with rotation
           if (technologyProgress <= TITLE_ANIMATION_DURATION) {
             const titleProgress = technologyProgress / TITLE_ANIMATION_DURATION;
-            
+
             // Calculate target position: move from center to left edge of spacer
             // Title starts centered (50% of viewport), moves to left edge of spacer (12% from left)
             const titleWidth = viewportWidth * 0.12; // 12% of viewport
             const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
             const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
-            
+
             // Animate: fade in, rotate -90°, and translate to left
             gsap.set(titleRef.current, {
               opacity: titleProgress,
@@ -308,15 +342,20 @@ export default function TechnologySection() {
         </h2>
         <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
           <div ref={cardsContainerRef} className={styles.cardsContainer}>
-            {[...Array(6)].map((_, i) => (
+            {technologySteps.map((step, i) => (
               <div
-                key={i}
+                key={step.id}
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
                 className={styles.card}
               >
-                Card {i + 1}
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>
+                    <span className={styles.shortTitle}>{step.shortTitle}</span>
+                    <span className={styles.hoverTitle}>{step.hoverTitle}</span>
+                  </h3>
+                </div>
               </div>
             ))}
           </div>

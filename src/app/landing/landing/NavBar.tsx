@@ -4,14 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import styles from "./NavBar.module.css";
 
 export default function NavBar() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(() => {
+    // Initialize based on screen size for mobile
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     if (isMobile) {
-      // On mobile, show hamburger from the start
-      setIsScrolled(true);
+      // On mobile, hamburger is already shown from initialization
       return;
     }
     const handleScroll = () => {

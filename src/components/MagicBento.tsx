@@ -6,14 +6,12 @@ export interface BentoCardProps {
   title?: string;
   description?: string;
   label?: string;
-  textAutoHide?: boolean;
   disableAnimations?: boolean;
   image?: string;
   isSellable?: boolean;
 }
 
 export interface BentoProps {
-  textAutoHide?: boolean;
   enableStars?: boolean;
   enableSpotlight?: boolean;
   enableBorderGlow?: boolean;
@@ -565,7 +563,6 @@ const useMobileDetection = () => {
 };
 
 const MagicBento: React.FC<BentoProps> = ({
-  textAutoHide = true,
   enableStars = true,
   enableSpotlight = true,
   enableBorderGlow = true,

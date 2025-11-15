@@ -59,7 +59,9 @@ export default function PurposeSection() {
   }, []);
 
   const isDesktop = useCallback(() => {
-    return typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT;
+    return (
+      typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT
+    );
   }, []);
 
   const getPurposeBounds = useCallback(() => {
@@ -78,10 +80,13 @@ export default function PurposeSection() {
     return Math.min(1, Math.max(0, (y - top) / height));
   }, [getPurposeBounds]);
 
-  const toScrollY = useCallback((progress: number) => {
-    const { top, height } = getPurposeBounds();
-    return Math.round(top + progress * height);
-  }, [getPurposeBounds]);
+  const toScrollY = useCallback(
+    (progress: number) => {
+      const { top, height } = getPurposeBounds();
+      return Math.round(top + progress * height);
+    },
+    [getPurposeBounds]
+  );
 
   const findNextSnap = (dir: 1 | -1, current: number) => {
     const points = SNAP_POINTS.current;
@@ -165,29 +170,43 @@ export default function PurposeSection() {
         const purposeStart =
           (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) /
           100;
-        const purposeEnd = purposeStart + (PURPOSE_HEIGHT * viewportHeight) / 100;
+        const purposeEnd =
+          purposeStart + (PURPOSE_HEIGHT * viewportHeight) / 100;
 
         if (scrollY >= purposeStart && scrollY <= purposeEnd) {
           // Ensure container is not hidden when within bounds
           if (isHiddenRef.current) {
             isHiddenRef.current = false;
           }
-          const progress = (scrollY - purposeStart) / (purposeEnd - purposeStart);
+          const progress =
+            (scrollY - purposeStart) / (purposeEnd - purposeStart);
 
           // Mobile: simplified condensed sequence (fade in/out)
           if (isMobile) {
             const p1 = Math.min(progress / MOBILE_P1_END, 1); // 0-25%
             const p2 =
               progress > MOBILE_P1_END
-                ? Math.min((progress - MOBILE_P1_END) / (MOBILE_P2_END - MOBILE_P1_END), 1)
+                ? Math.min(
+                    (progress - MOBILE_P1_END) /
+                      (MOBILE_P2_END - MOBILE_P1_END),
+                    1
+                  )
                 : 0; // 25-50%
             const p3 =
               progress > MOBILE_P2_END
-                ? Math.min((progress - MOBILE_P2_END) / (MOBILE_P3_END - MOBILE_P2_END), 1)
+                ? Math.min(
+                    (progress - MOBILE_P2_END) /
+                      (MOBILE_P3_END - MOBILE_P2_END),
+                    1
+                  )
                 : 0; // 50-70%
             const fadeOut =
               progress > MOBILE_FADEOUT_START
-                ? Math.min((progress - MOBILE_FADEOUT_START) / (1 - MOBILE_FADEOUT_START), 1)
+                ? Math.min(
+                    (progress - MOBILE_FADEOUT_START) /
+                      (1 - MOBILE_FADEOUT_START),
+                    1
+                  )
                 : 0; // 80-100%
 
             batchAnimations([
@@ -270,7 +289,8 @@ export default function PurposeSection() {
           }
           // Phase 2: Shrink left container, expand right container space (20-40% of 800vh)
           else if (progress <= PHASE_2_END) {
-            const phase2Progress = (progress - PHASE_1_END) / (PHASE_2_END - PHASE_1_END);
+            const phase2Progress =
+              (progress - PHASE_1_END) / (PHASE_2_END - PHASE_1_END);
             if (!isTwoColumnLayout) setIsTwoColumnLayout(true);
 
             const rightWidth = phase2Progress * 50;
@@ -311,7 +331,8 @@ export default function PurposeSection() {
           }
           // Phase 3: Fade in video in the right column (40-60% of 800vh)
           else if (progress <= PHASE_3_END) {
-            const phase3Progress = (progress - PHASE_2_END) / (PHASE_3_END - PHASE_2_END);
+            const phase3Progress =
+              (progress - PHASE_2_END) / (PHASE_3_END - PHASE_2_END);
             batchAnimations([
               () =>
                 gsap.to(container, {
@@ -387,7 +408,8 @@ export default function PurposeSection() {
           // Phase 5: Fold up both columns AND page title (70-85% of 800vh)
           // FIXED: Now correctly folds from top (inset top value increases)
           else if (progress <= PHASE_5_END) {
-            const fadeOutProgress = (progress - PHASE_4_END) / (PHASE_5_END - PHASE_4_END);
+            const fadeOutProgress =
+              (progress - PHASE_4_END) / (PHASE_5_END - PHASE_4_END);
             batchAnimations([
               () =>
                 gsap.to(container, {
@@ -425,7 +447,8 @@ export default function PurposeSection() {
           }
           // Phase 6: Unfold "Our Purpose" text (85-87.5% of 800vh)
           else if (progress <= PHASE_6_END) {
-            const stampProgress = (progress - PHASE_5_END) / (PHASE_6_END - PHASE_5_END);
+            const stampProgress =
+              (progress - PHASE_5_END) / (PHASE_6_END - PHASE_5_END);
             batchAnimations([
               () =>
                 gsap.to(container, {
@@ -502,7 +525,8 @@ export default function PurposeSection() {
           }
           // Phase 8: Zoom out and fade to transition to Vision (90-100% of 800vh)
           else {
-            const zoomProgress = (progress - PHASE_8_START) / (1 - PHASE_8_START);
+            const zoomProgress =
+              (progress - PHASE_8_START) / (1 - PHASE_8_START);
             const scale = 1 + zoomProgress * 5;
             const opacity = 1 - zoomProgress;
 
@@ -564,7 +588,12 @@ export default function PurposeSection() {
       }
       killAllAnimations();
     };
-  }, [updateViewportCache, batchAnimations, killAllAnimations]);
+  }, [
+    updateViewportCache,
+    batchAnimations,
+    killAllAnimations,
+    isTwoColumnLayout,
+  ]);
 
   // Handle isHidden state for CSS - only apply when hidden, don't interfere with GSAP
   useEffect(() => {
@@ -575,11 +604,11 @@ export default function PurposeSection() {
 
     const checkHidden = () => {
       const currentHidden = isHiddenRef.current;
-      
+
       // Only update if state changed
       if (currentHidden !== lastHiddenState) {
         lastHiddenState = currentHidden;
-        
+
         if (currentHidden) {
           // Force hide when needed
           container.style.cssText = `
@@ -590,10 +619,10 @@ export default function PurposeSection() {
           `;
         } else {
           // Remove forced styles to let GSAP control visibility
-          container.style.removeProperty('opacity');
-          container.style.removeProperty('visibility');
-          container.style.removeProperty('pointer-events');
-          container.style.removeProperty('display');
+          container.style.removeProperty("opacity");
+          container.style.removeProperty("visibility");
+          container.style.removeProperty("pointer-events");
+          container.style.removeProperty("display");
         }
       }
     };
@@ -659,7 +688,7 @@ export default function PurposeSection() {
       if (recentTouchRef.current) return;
       const { top, end } = getPurposeBounds();
       const y = window.scrollY;
-      
+
       // Allow free scrolling outside Purpose section bounds
       if (y < top || y > end) return;
 
@@ -686,26 +715,26 @@ export default function PurposeSection() {
       }
 
       const current = getProgress();
-      
+
       // Allow scrolling back to Hero if at start and scrolling up
       if (dir === -1 && current <= 0.01) {
         // Don't prevent default - allow normal scroll to Hero
         return;
       }
-      
+
       // Allow scrolling forward to next section if at end and scrolling down
       if (dir === 1 && current >= 0.99) {
         // Don't prevent default - allow normal scroll to next section
         return;
       }
-      
+
       const targetProgress = findNextSnap(dir as 1 | -1, current);
-      
+
       // If target is the same as current (already at snap point), allow normal scroll
       if (Math.abs(targetProgress - current) < 0.01) {
         return;
       }
-      
+
       const targetY = toScrollY(targetProgress);
       isSnappingRef.current = true;
       pendingTargetRef.current = targetY;
@@ -736,10 +765,10 @@ export default function PurposeSection() {
       const now = Date.now();
       const { top, end } = getPurposeBounds();
       const y = window.scrollY;
-      
+
       // Allow free scrolling outside Purpose section bounds
       if (y < top || y > end) return;
-      
+
       if (Math.abs(e.deltaY) < 2) return;
       if (isSnappingRef.current && pendingTargetRef.current !== null) {
         e.preventDefault();
@@ -752,26 +781,26 @@ export default function PurposeSection() {
 
       const dir: 1 | -1 = e.deltaY > 0 ? 1 : -1;
       const current = getProgress();
-      
+
       // Allow scrolling back to Hero if at start and scrolling up
       if (dir === -1 && current <= 0.01) {
         // Don't prevent default - allow normal scroll to Hero
         return;
       }
-      
+
       // Allow scrolling forward to next section if at end and scrolling down
       if (dir === 1 && current >= 0.99) {
         // Don't prevent default - allow normal scroll to next section
         return;
       }
-      
+
       const targetProgress = findNextSnap(dir, current);
-      
+
       // If target is the same as current (already at snap point), allow normal scroll
       if (Math.abs(targetProgress - current) < 0.01) {
         return;
       }
-      
+
       const targetY = toScrollY(targetProgress);
       isSnappingRef.current = true;
       pendingTargetRef.current = targetY;

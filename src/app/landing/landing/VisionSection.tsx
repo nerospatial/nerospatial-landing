@@ -6,7 +6,6 @@ import FlowingMenu from "@/components/FlowingMenu";
 import styles from "./VisionSection.module.css";
 
 // Constants - matching PurposeSection
-const MOBILE_BREAKPOINT = 768;
 const PURPOSE_START_OFFSET = 200; // vh
 const PURPOSE_START_MULTIPLIER = 0.98;
 const PURPOSE_HEIGHT = 800; // vh

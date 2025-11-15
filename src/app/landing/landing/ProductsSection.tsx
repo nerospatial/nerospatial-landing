@@ -218,7 +218,6 @@ export default function ProductsSection() {
             enableMagnetism={true}
             glowColor="96, 165, 250"
             spotlightRadius={350}
-            textAutoHide={false}
           />
         </div>
       </div>

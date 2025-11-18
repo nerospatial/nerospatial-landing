@@ -3,52 +3,55 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AntiGravityBackground from "@/components/core/AntiGravityBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function PurposeSection() {
   const containerRef = useRef<HTMLElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
+    const content = contentRef.current;
     const text = textRef.current;
     
-    if (!container || !text) return;
+    if (!container || !content || !text) return;
 
-    // Pinning the section
+    // Split text for animation (simple word split)
+    const words = text.innerText.split(" ");
+    text.innerHTML = words.map(word => `<span class="word inline-block opacity-0 translate-y-10 filter blur-sm mr-[0.2em]">${word}</span>`).join(" ");
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: "+=200%", // Pin for 200vh duration
+        end: "+=150%",
         scrub: 1,
         pin: true,
         anticipatePin: 1,
       },
     });
 
-    // Animation Sequence
-    // 1. Fade in title
-    tl.fromTo(
-      text.querySelector("h2"),
-      { opacity: 0, y: 50, filter: "blur(10px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 1 }
-    )
-    // 2. Reveal paragraph line by line
-    .fromTo(
-      text.querySelectorAll("p"),
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, stagger: 0.3, duration: 1 },
-      "-=0.5"
-    )
-    // 3. Scale up and fade out to transition to next section
-    .to(text, {
-      scale: 1.1,
+    tl.to(content, {
+      opacity: 1,
+      duration: 0.5,
+    })
+    .to(".word", {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      stagger: 0.1,
+      duration: 2,
+      ease: "power4.out",
+    })
+    .to(content, {
+      scale: 0.9,
       opacity: 0,
-      filter: "blur(20px)",
+      filter: "blur(10px)",
       duration: 1,
-      delay: 0.5
+      delay: 1,
     });
 
     return () => {
@@ -59,33 +62,30 @@ export default function PurposeSection() {
 
   return (
     <section
-      id="purpose"
       ref={containerRef}
-      className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-[var(--bg-nero)]"
+      className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-black text-white"
     >
-      <div ref={textRef} className="max-w-4xl px-6 text-center z-10">
-        <h2 className="text-sm font-medium uppercase tracking-[0.2em] text-[var(--accent-primary)] mb-8">
-          Our Purpose
+      {/* Anti-Gravity Background */}
+      <div className="absolute inset-0 opacity-80">
+        <AntiGravityBackground />
+      </div>
+
+      <div ref={contentRef} className="relative z-10 max-w-6xl px-6 text-center opacity-0">
+        <h2 
+          ref={textRef}
+          className="text-4xl md:text-7xl font-black leading-tight tracking-tight uppercase"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          We believe technology should understand you, not just compute for you.
         </h2>
         
-        <div className="space-y-8">
-          <p className="text-4xl md:text-6xl font-semibold leading-tight text-white">
-            We believe technology should <span className="text-[var(--accent-glow)]">understand</span> you, not just compute for you.
-          </p>
-          
-          <p className="text-xl md:text-2xl text-[var(--text-secondary)] leading-relaxed max-w-3xl mx-auto">
-            We&apos;re building the infrastructure for the next generation of AI interactions.
-            Where digital entities aren&apos;t just chatbots, but spatially aware companions.
-          </p>
-          
-          <p className="text-xl md:text-2xl text-[var(--text-secondary)] leading-relaxed max-w-3xl mx-auto">
-            It&apos;s not just about AR. It&apos;s about creating a seamless bridge between the digital and physical worlds, where AI becomes a natural extension of your mind.
+        <div className="mt-12 flex flex-col gap-6 items-center">
+          <div className="w-px h-24 bg-gradient-to-b from-white to-transparent opacity-50" />
+          <p className="text-sm md:text-base font-mono text-white/60 uppercase tracking-widest">
+            The New Standard of Interaction
           </p>
         </div>
       </div>
-      
-      {/* Background Elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--accent-primary)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
     </section>
   );
 }

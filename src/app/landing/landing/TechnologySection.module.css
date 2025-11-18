@@ -39,9 +39,9 @@
 
 .titleSpacer {
   /* Spacer to reserve space for title in flex layout */
-  flex: 0 0 12%;
-  min-width: 80px;
-  max-width: 150px;
+  flex: 0 0 8%;
+  min-width: 60px;
+  max-width: 100px;
   height: 100%;
 }
 
@@ -54,9 +54,9 @@
   letter-spacing: 0.05em;
 
   /* Fixed width for title section - match ProductsSection */
-  width: 12%;
-  min-width: 80px;
-  max-width: 150px;
+  width: 8%;
+  min-width: 60px;
+  max-width: 100px;
 
   display: flex;
   align-items: center;
@@ -164,7 +164,7 @@
   width: 100%;
   max-width: 100%;
 
-  padding: 2rem 3rem 2rem 1rem; /* Match ProductsSection padding */
+  padding: 1rem 4rem 0.5rem 2rem; /* Balanced padding for centering */
   margin: 0;
   overflow: hidden;
   opacity: 0;
@@ -177,202 +177,260 @@
   width: 100%;
   max-width: 100%;
   display: grid;
-  grid-template-columns: 1.4fr 0.8fr 0.8fr 0.8fr 0.8fr 1.4fr; /* Slightly wider side columns */
-  grid-auto-rows: minmax(
-    220px,
-    auto
-  ); /* Increased min height for better card sizing */
-  gap: 1.25rem; /* Elegant spacing */
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  grid-template-rows: repeat(3, minmax(220px, 1fr)); /* 3 rows with minimum height */
+  gap: 1.5rem; /* Spacing between cards */
   pointer-events: auto;
   box-sizing: border-box;
+  height: 80vh; /* Reduced height */
+  max-height: 680px;
 }
 
 .card {
-  /* Remove background color to make cards transparent */
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
   color: white;
   pointer-events: auto;
   will-change: transform, opacity;
   opacity: 0;
   visibility: hidden;
-  /* Cards are now grid items - no absolute positioning */
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  transform: scale(0.8); /* Initial scale for stamp effect */
-  padding: 2rem 1.5rem;
+  transform: scale(0.8);
+  padding: 2rem;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: scale(0.82);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* Individual gradient hover effects for each card */
-.card:nth-child(1):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.15),
-    rgba(147, 51, 234, 0.15)
-  );
+/* Color scheme specific styles matching Tailwind classes */
+.cardViolet {
+  background: rgba(76, 29, 149, 0.3); /* violet-900/30 */
+  color: rgba(221, 214, 254, 1); /* violet-200 */
 }
 
-.card:nth-child(2):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(16, 185, 129, 0.15),
-    rgba(5, 150, 105, 0.15)
-  );
+.cardViolet .cardIcon {
+  color: rgba(139, 92, 246, 1); /* violet-500 */
 }
 
-.card:nth-child(3):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(245, 158, 11, 0.15),
-    rgba(217, 119, 6, 0.15)
-  );
+.cardViolet .cardNumber {
+  color: rgba(139, 92, 246, 0.2); /* violet-500/20 */
 }
 
-.card:nth-child(4):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(239, 68, 68, 0.15),
-    rgba(220, 38, 38, 0.15)
-  );
+.cardViolet .cardTitle {
+  color: rgba(196, 181, 253, 1); /* violet-300 */
 }
 
-.card:nth-child(5):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.15),
-    rgba(124, 58, 237, 0.15)
-  );
+.cardViolet .cardDescription {
+  color: rgba(167, 139, 250, 1); /* violet-400 */
 }
 
-.card:nth-child(6):hover {
-  background: linear-gradient(
-    135deg,
-    rgba(6, 182, 212, 0.15),
-    rgba(8, 145, 178, 0.15)
-  );
+.cardCyan {
+  background: rgba(22, 78, 99, 0.3); /* cyan-900/30 */
+  color: rgba(165, 243, 252, 1); /* cyan-200 */
+}
+
+.cardCyan .cardIcon {
+  color: rgba(6, 182, 212, 1); /* cyan-500 */
+}
+
+.cardCyan .cardNumber {
+  color: rgba(6, 182, 212, 0.2); /* cyan-500/20 */
+}
+
+.cardCyan .cardTitle {
+  color: rgba(103, 232, 249, 1); /* cyan-300 */
+}
+
+.cardCyan .cardDescription {
+  color: rgba(34, 211, 238, 1); /* cyan-400 */
+}
+
+.cardRose {
+  background: rgba(136, 19, 55, 0.3); /* rose-900/30 */
+  color: rgba(254, 205, 211, 1); /* rose-200 */
+}
+
+.cardRose .cardIcon {
+  color: rgba(244, 63, 94, 1); /* rose-500 */
+}
+
+.cardRose .cardNumber {
+  color: rgba(244, 63, 94, 0.2); /* rose-500/20 */
+}
+
+.cardRose .cardTitle {
+  color: rgba(253, 164, 175, 1); /* rose-300 */
+}
+
+.cardRose .cardDescription {
+  color: rgba(251, 113, 133, 1); /* rose-400 */
+}
+
+.cardEmerald {
+  background: rgba(6, 78, 59, 0.3); /* emerald-900/30 */
+  color: rgba(167, 243, 208, 1); /* emerald-200 */
+}
+
+.cardEmerald .cardIcon {
+  color: rgba(16, 185, 129, 1); /* emerald-500 */
+}
+
+.cardEmerald .cardNumber {
+  color: rgba(16, 185, 129, 0.2); /* emerald-500/20 */
+}
+
+.cardEmerald .cardTitle {
+  color: rgba(110, 231, 183, 1); /* emerald-300 */
+}
+
+.cardEmerald .cardDescription {
+  color: rgba(52, 211, 153, 1); /* emerald-400 */
+}
+
+.cardAmber {
+  background: rgba(120, 53, 15, 0.3); /* amber-900/30 */
+  color: rgba(253, 230, 138, 1); /* amber-200 */
+}
+
+.cardAmber .cardIcon {
+  color: rgba(245, 158, 11, 1); /* amber-500 */
+}
+
+.cardAmber .cardNumber {
+  color: rgba(245, 158, 11, 0.2); /* amber-500/20 */
+}
+
+.cardAmber .cardTitle {
+  color: rgba(252, 211, 77, 1); /* amber-300 */
+}
+
+.cardAmber .cardDescription {
+  color: rgba(251, 191, 36, 1); /* amber-400 */
+}
+
+.cardBlue {
+  background: rgba(30, 58, 138, 0.3); /* blue-900/30 */
+  color: rgba(191, 219, 254, 1); /* blue-200 */
+}
+
+.cardBlue .cardIcon {
+  color: rgba(59, 130, 246, 1); /* blue-500 */
+}
+
+.cardBlue .cardNumber {
+  color: rgba(59, 130, 246, 0.2); /* blue-500/20 */
+}
+
+.cardBlue .cardTitle {
+  color: rgba(147, 197, 253, 1); /* blue-300 */
+}
+
+.cardBlue .cardDescription {
+  color: rgba(96, 165, 250, 1); /* blue-400 */
 }
 
 .cardContent {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  text-align: center;
+  align-items: flex-start;
+  justify-content: space-between;
   width: 100%;
   height: 100%;
-  padding-bottom: 20px;
-  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.cardIcon {
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 48;
+}
+
+.cardNumber {
+  font-size: 4rem;
+  font-weight: 900;
+  opacity: 0.3;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .cardTitle {
-  font-size: 1.6rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0;
+  margin: 0 0 0.25rem 0;
   line-height: 1.2;
-  position: relative;
-  min-height: 1.2em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  text-align: center;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.shortTitle {
-  opacity: 1;
-  transition: all 0.4s ease;
-  display: block;
-  width: 100%;
-  text-align: center;
+.cardDescription {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0.25rem 0 0 0;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
 }
 
-.hoverTitle {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  opacity: 0;
-  transition: all 0.4s ease;
-  font-size: 1.3rem;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card:hover .shortTitle {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.card:hover .hoverTitle {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.card:hover .shortTitle {
-  opacity: 0;
-}
-
-.card:hover .hoverTitle {
-  opacity: 1;
-}
-
-/* Bento grid card positioning */
+/* Grid positioning to match the updated layout */
 .card:nth-child(1) {
-  /* Card 1: Vertical rectangle (left side) - taller */
+  /* Card 1 (WAKE UP): Top-left, equal size */
   grid-column: 1;
-  grid-row: 1 / span 3; /* 1 column, 3 rows tall for more height */
+  grid-row: 1;
 }
 
 .card:nth-child(2) {
-  /* Card 2: Small card (columns 2-3, top) */
-  grid-column: 2 / span 2; /* 2 columns */
-  grid-row: 1; /* 1 row - small */
+  /* Card 2 (SENSE): Top-center, equal size */
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .card:nth-child(3) {
-  /* Card 3: Large card (columns 4-5, top) */
-  grid-column: 4 / span 2; /* 2 columns */
-  grid-row: 1 / span 2; /* 2 rows tall - large */
+  /* Card 3 (PERSONALIZE): Top-right, equal size */
+  grid-column: 3;
+  grid-row: 1;
 }
 
 .card:nth-child(4) {
-  /* Card 4: Large card (columns 2-3, bottom) */
-  grid-column: 2 / span 2; /* 2 columns */
-  grid-row: 2 / span 2; /* 2 rows tall - large */
+  /* Card 4 (UNDERSTAND): Second row, spans 2 columns */
+  grid-column: 1 / span 2;
+  grid-row: 2;
 }
 
 .card:nth-child(5) {
-  /* Card 5: Small card (columns 4-5, bottom) */
-  grid-column: 4 / span 2; /* 2 columns */
-  grid-row: 3; /* 1 row - small */
+  /* Card 5 (RESPOND): Second row right */
+  grid-column: 3;
+  grid-row: 2;
 }
 
 .card:nth-child(6) {
-  /* Card 6: Vertical rectangle (right side) - taller */
-  grid-column: 6;
-  grid-row: 1 / span 3; /* 1 column, 3 rows tall for more height */
+  /* Card 6 (EVOLVE): Third row, elongated across all columns */
+  grid-column: 1 / span 3;
+  grid-row: 3;
 }
 
 @media (max-width: 768px) {
@@ -407,12 +465,13 @@
 
   .cardsContainer {
     width: 100%;
+    height: auto;
     grid-template-columns: repeat(2, 1fr); /* 2-column grid on mobile */
-    grid-auto-rows: minmax(180px, auto);
+    grid-template-rows: auto;
     gap: 1rem;
   }
 
-  /* Mobile: Stack cards in simpler layout */
+  /* Mobile: Reset all cards to auto positioning */
   .card:nth-child(1),
   .card:nth-child(2),
   .card:nth-child(3),
@@ -424,16 +483,23 @@
   }
 
   .card {
-    font-size: 0.9rem;
     padding: 1.5rem 1rem;
+    min-height: 200px;
+  }
+
+  .cardNumber {
+    font-size: 2.5rem;
   }
 
   .cardTitle {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
-  .shortTitle,
-  .hoverTitle {
-    font-size: 1.1rem;
+  .cardDescription {
+    font-size: 0.85rem;
+  }
+
+  .cardIcon {
+    font-size: 1.5rem;
   }
 }

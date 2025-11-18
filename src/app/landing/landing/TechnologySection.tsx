@@ -19,33 +19,53 @@ const CARDS_ANIMATION_START = 0.25; // Cards start animating at 25% of section
 const technologySteps = [
   {
     id: 1,
-    shortTitle: "Wake Up",
-    hoverTitle: "Human Interaction Activation",
+    number: "01",
+    icon: "power_settings_new",
+    title: "Wake Up",
+    description: "Device activates upon user interaction or specific triggers.",
+    colorScheme: "violet",
   },
   {
     id: 2,
-    shortTitle: "Sense",
-    hoverTitle: "Real-time Audio & Video Capture",
+    number: "02",
+    icon: "visibility",
+    title: "Sense",
+    description: "Gathers data from the environment via cameras and sensors.",
+    colorScheme: "cyan",
   },
   {
     id: 3,
-    shortTitle: "Understand",
-    hoverTitle: "Cloud Spatial Intelligence",
+    number: "03",
+    icon: "fingerprint",
+    title: "Personalize",
+    description: "Adapts to the user's unique preferences and learning style.",
+    colorScheme: "rose",
   },
   {
     id: 4,
-    shortTitle: "Personalize",
-    hoverTitle: "Memory & Context Layer",
+    number: "04",
+    icon: "psychology",
+    title: "Understand",
+    description:
+      "The AI processes and interprets the collected data to find patterns and derive meaning, turning raw information into contextual knowledge.",
+    colorScheme: "emerald",
   },
   {
     id: 5,
-    shortTitle: "Respond",
-    hoverTitle: "Multimodal Real-time Output",
+    number: "05",
+    icon: "record_voice_over",
+    title: "Respond",
+    description: "Delivers audio-visual feedback and guidance.",
+    colorScheme: "amber",
   },
   {
     id: 6,
-    shortTitle: "Evolve",
-    hoverTitle: "Continuous Learning & Growth",
+    number: "06",
+    icon: "auto_graph",
+    title: "Evolve",
+    description:
+      "Continuously learns from interactions to improve its performance and accuracy over time.",
+    colorScheme: "blue",
   },
 ];
 
@@ -121,7 +141,7 @@ export default function TechnologySection() {
         if (reduceMotionRef.current) {
           if (scrollY >= technologyStartScroll) {
             gsap.set(container, { opacity: 1, visibility: "visible" });
-            const titleWidth = viewportWidth * 0.12;
+            const titleWidth = viewportWidth * 0.08;
             const spacerLeft = titleWidth / 2;
             const targetX = -viewportWidth / 2 + spacerLeft;
             gsap.set(titleRef.current, {
@@ -163,8 +183,8 @@ export default function TechnologySection() {
             const titleProgress = technologyProgress / TITLE_ANIMATION_DURATION;
 
             // Calculate target position: move from center to left edge of spacer
-            // Title starts centered (50% of viewport), moves to left edge of spacer (12% from left)
-            const titleWidth = viewportWidth * 0.12; // 12% of viewport
+            // Title starts centered (50% of viewport), moves to left edge of spacer (8% from left)
+            const titleWidth = viewportWidth * 0.08; // 8% of viewport
             const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
             const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
 
@@ -178,7 +198,7 @@ export default function TechnologySection() {
             });
           } else {
             // Lock title in final state
-            const titleWidth = viewportWidth * 0.12;
+            const titleWidth = viewportWidth * 0.08;
             const spacerLeft = titleWidth / 2;
             const targetX = -viewportWidth / 2 + spacerLeft;
             gsap.set(titleRef.current, {
@@ -262,7 +282,7 @@ export default function TechnologySection() {
         } else if (scrollY > technologyEnd) {
           // After Technology section - keep final state
           gsap.set(container, { opacity: 1, visibility: "visible" });
-          const titleWidth = viewportWidth * 0.12;
+          const titleWidth = viewportWidth * 0.08;
           const spacerLeft = titleWidth / 2;
           const targetX = -viewportWidth / 2 + spacerLeft;
           gsap.set(titleRef.current, {
@@ -348,13 +368,27 @@ export default function TechnologySection() {
                 ref={(el) => {
                   cardRefs.current[i] = el;
                 }}
-                className={styles.card}
+                className={`${styles.card} ${
+                  styles[
+                    `card${
+                      step.colorScheme.charAt(0).toUpperCase() +
+                      step.colorScheme.slice(1)
+                    }`
+                  ]
+                }`}
+                data-color={step.colorScheme}
               >
                 <div className={styles.cardContent}>
-                  <h3 className={styles.cardTitle}>
-                    <span className={styles.shortTitle}>{step.shortTitle}</span>
-                    <span className={styles.hoverTitle}>{step.hoverTitle}</span>
-                  </h3>
+                  <div className={styles.cardHeader}>
+                    <span
+                      className={`material-symbols-outlined ${styles.cardIcon}`}
+                    >
+                      {step.icon}
+                    </span>
+                    <span className={styles.cardNumber}>{step.number}</span>
+                  </div>
+                  <h3 className={styles.cardTitle}>{step.title}</h3>
+                  <p className={styles.cardDescription}>{step.description}</p>
                 </div>
               </div>
             ))}

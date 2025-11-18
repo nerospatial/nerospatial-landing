@@ -203,17 +203,20 @@ export default function VisionSection() {
               {
                 link: "#spatial-companions",
                 text: "Companions Aware of Your Surroundings",
-                image: "/assets/placeholder.jpg",
+                image:
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%234F46E5' width='100' height='100'/%3E%3C/svg%3E",
               },
               {
                 link: "#contextual-intelligence",
                 text: "Intelligence that Understands You",
-                image: "/assets/placeholder.jpg",
+                image:
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%236366F1' width='100' height='100'/%3E%3C/svg%3E",
               },
               {
                 link: "#growth-ecosystem",
                 text: "Personal Learning Ecosystem",
-                image: "/assets/placeholder.jpg",
+                image:
+                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%238B5CF6' width='100' height='100'/%3E%3C/svg%3E",
               },
             ]}
           />

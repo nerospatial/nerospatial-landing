@@ -1,270 +1,197 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import styles from "./NavBar.module.css";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import MagneticButton from "@/components/ui/MagneticButton";
+import Link from "next/link";
+import { useLenis } from "@/components/core/SmoothScroll";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function NavBar() {
-  const [isScrolled, setIsScrolled] = useState(() => {
-    // Initialize based on screen size for mobile
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 768;
-    }
-    return false;
-  });
+  const navRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    if (isMobile) {
-      // On mobile, hamburger is already shown from initialization
-      return;
-    }
+    const nav = navRef.current;
+    const logo = logoRef.current;
+    const links = linksRef.current;
+    const cta = ctaRef.current;
+
+    if (!nav || !logo || !links || !cta) return;
+
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const heroHeight = window.innerHeight; // Full viewport height
-      setIsScrolled(scrollY > heroHeight * 0.8); // Switch to hamburger after 80% of hero
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Close menu when clicking outside or on escape
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsMenuOpen(false);
+      const scrolled = window.scrollY > 50;
+      setIsScrolled(scrolled);
     };
 
-    if (isMenuOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden"; // Prevent background scroll
-    } else {
-      document.body.style.overflow = "";
-    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    // Initial Animation
+    const tl = gsap.timeline({ delay: 0.2 });
+    tl.fromTo(
+      nav,
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+    )
+      .fromTo(
+        logo,
+        { x: -20, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+        "-=0.5"
+      )
+      .fromTo(
+        links.children,
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power3.out" },
+        "-=0.6"
+      )
+      .fromTo(
+        cta,
+        { x: 20, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+        "-=0.6"
+      );
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
+      window.removeEventListener("scroll", handleScroll);
+      tl.kill();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, [isMenuOpen]);
+  }, []);
 
-  // Custom smooth scroll function with easing
-  const smoothScrollTo = useCallback(
-    (targetPosition: number, duration: number = 1000) => {
-      const startPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const distance = targetPosition - startPosition;
-      let startTime: number | null = null;
-
-      const easeInOutQuad = (t: number): number => {
-        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      };
-
-      const animation = (currentTime: number) => {
-        if (startTime === null) {
-          startTime = currentTime;
-        }
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const ease = easeInOutQuad(progress);
-
-        const newPosition = startPosition + distance * ease;
-
-        // Try multiple methods to ensure scroll happens
-        window.scrollTo(0, newPosition);
-        document.documentElement.scrollTop = newPosition;
-        document.body.scrollTop = newPosition;
-
-        if (progress < 1) {
-          requestAnimationFrame(animation);
-        }
-      };
-
-      requestAnimationFrame(animation);
-    },
-    []
-  );
-
-  const handleWaitlistClick = useCallback(() => {
-    const productsSection = document.querySelector('[data-section="products"]');
-
-    if (productsSection) {
-      // Get accurate position relative to document
-      const rect = productsSection.getBoundingClientRect();
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
-      const targetPosition = rect.top + scrollTop;
-
-      // Force scroll with custom animation (more reliable)
-      smoothScrollTo(targetPosition, 1200);
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      gsap.to(mobileMenuRef.current, {
+        opacity: 1,
+        pointerEvents: "auto",
+        duration: 0.5,
+        ease: "power3.inOut",
+      });
+    } else {
+      gsap.to(mobileMenuRef.current, {
+        opacity: 0,
+        pointerEvents: "none",
+        duration: 0.5,
+        ease: "power3.inOut",
+      });
     }
-  }, [smoothScrollTo]);
+  };
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>, id: string) => {
+    e.preventDefault();
+    if (isMenuOpen) toggleMenu();
+    
+    if (lenis) {
+      lenis.scrollTo(id, { offset: 0, duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    } else {
+      const element = document.querySelector(id);
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <>
-      <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
-        <div className={styles.navContainer}>
-          {/* Full navbar - visible in hero */}
-          <div
-            className={`${styles.fullNav} ${isScrolled ? styles.hidden : ""}`}
-          >
-            <div className={styles.navCenter}>
-              <div className={styles.navLinks}>
-                <a href="#hero" className={styles.navLink}>
-                  Home
-                </a>
-                <a href="#products" className={styles.navLink}>
-                  Products
-                </a>
-                <a href="#about" className={styles.navLink}>
-                  About
-                </a>
-                <a href="#contact" className={styles.navLink}>
-                  Contact
-                </a>
-              </div>
+      <nav
+        ref={navRef}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          isScrolled ? "py-4" : "py-6"
+        }`}
+      >
+        <div
+          className={`mx-auto max-w-7xl px-6 transition-all duration-500 ${
+            isScrolled
+              ? "bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]"
+              : "bg-transparent border-transparent"
+          }`}
+        >
+          <div className="flex items-center justify-between h-14">
+            {/* Logo */}
+            <div ref={logoRef} className="flex items-center pl-2">
+              <Link href="/" className="group relative flex items-center gap-2">
+                <span className="text-2xl font-bold tracking-tighter text-white">
+                  Nero<span className="font-light text-white/70">Spatial</span>
+                </span>
+              </Link>
             </div>
 
-            <div className={styles.navActions}>
-              <button
-                type="button"
-                className={styles.ctaButton}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleWaitlistClick();
-                }}
-                aria-label="Join Waitlist"
-              >
-                <span>Waitlist</span>
-                <svg
-                  className={styles.rocketIcon}
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+            {/* Desktop Links */}
+            <div ref={linksRef} className="hidden md:flex items-center gap-10">
+              {[
+                { name: "Vision", href: "#vision" },
+                { name: "Products", href: "#products" },
+                { name: "Technology", href: "#technology" },
+              ].map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={(e) => scrollToSection(e, link.href)}
+                  className="relative text-sm font-medium text-white/70 hover:text-white transition-colors duration-300 group py-2"
                 >
-                  <path
-                    d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.5 16.53 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.54 9.46C13.76 8.68 13.76 7.41 14.54 6.63S16.59 5.85 17.37 6.63C18.14 7.41 18.14 8.68 17.37 9.46C16.59 10.24 15.32 10.24 14.54 9.46M8.88 16.53L7.47 15.12L8.88 16.53M6.24 22L9.88 18.36C9.54 18.27 9.21 18.12 8.91 17.91L4.83 22H6.24M2 22H3.41L8.18 17.24L6.76 15.83L2 20.59V22M2 19.17L6.09 15.09C5.88 14.79 5.73 14.47 5.64 14.12L2 17.76V19.17Z"
-                    fill="currentColor"
-                  />
-                </svg>
+                  {link.name}
+                  <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full group-hover:left-0" />
+                </a>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div ref={ctaRef} className="flex items-center gap-4 pr-1">
+              <div className="hidden md:block">
+                <MagneticButton
+                  className={`px-6 py-2 text-sm font-medium transition-all duration-300 rounded-full ${
+                    isScrolled
+                      ? "bg-white text-black hover:bg-white/90"
+                      : "bg-white/10 text-white hover:bg-white hover:text-black border border-white/10"
+                  }`}
+                  strength={0.2}
+                >
+                  Join Waitlist
+                </MagneticButton>
+              </div>
+              
+              {/* Mobile Menu Toggle */}
+              <button 
+                className="md:hidden text-white p-2 z-50 relative mix-blend-difference"
+                onClick={toggleMenu}
+              >
+                <span className="material-symbols-outlined text-2xl">
+                  {isMenuOpen ? "close" : "menu"}
+                </span>
               </button>
             </div>
           </div>
-
-          {/* Hamburger menu - visible after scroll */}
-          <button
-            className={`${styles.hamburger} ${
-              isScrolled ? styles.visible : ""
-            }`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            <span
-              className={`${styles.hamburgerLine} ${
-                isMenuOpen ? styles.open : ""
-              }`}
-            ></span>
-            <span
-              className={`${styles.hamburgerLine} ${
-                isMenuOpen ? styles.open : ""
-              }`}
-            ></span>
-            <span
-              className={`${styles.hamburgerLine} ${
-                isMenuOpen ? styles.open : ""
-              }`}
-            ></span>
-          </button>
         </div>
       </nav>
 
-      {/* Side panel */}
-      <div
-        className={`${styles.overlay} ${isMenuOpen ? styles.visible : ""}`}
-        onClick={() => setIsMenuOpen(false)}
-      />
-      <div className={`${styles.sidePanel} ${isMenuOpen ? styles.open : ""}`}>
-        <div className={styles.sidePanelContent}>
-          <button
-            className={styles.closeButton}
-            onClick={() => setIsMenuOpen(false)}
-            aria-label="Close menu"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M18 6L6 18M6 6L18 18"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-          <nav className={styles.sidePanelNav}>
+      {/* Mobile Menu Overlay */}
+      <div 
+        ref={mobileMenuRef}
+        className="fixed inset-0 z-40 bg-black/95 opacity-0 pointer-events-none flex items-center justify-center"
+      >
+        <div className="flex flex-col items-center gap-8">
+          {[
+            { name: "Vision", href: "#vision" },
+            { name: "Products", href: "#products" },
+            { name: "Technology", href: "#technology" },
+          ].map((link) => (
             <a
-              href="#hero"
-              className={styles.sidePanelLink}
-              onClick={() => setIsMenuOpen(false)}
+              key={link.name}
+              href={link.href}
+              className="text-4xl font-bold text-white hover:text-[var(--accent-primary)] transition-colors"
+              onClick={(e) => scrollToSection(e, link.href)}
             >
-              Home
+              {link.name}
             </a>
-            <a
-              href="#products"
-              className={styles.sidePanelLink}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Products
-            </a>
-            <a
-              href="#about"
-              className={styles.sidePanelLink}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </a>
-            <a
-              href="#contact"
-              className={styles.sidePanelLink}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact
-            </a>
-
-            <button
-              type="button"
-              className={styles.sidePanelCta}
-              onClick={(e) => {
-                e.preventDefault();
-                handleWaitlistClick();
-                setIsMenuOpen(false);
-              }}
-            >
-              <span>Join Waitlist</span>
-              <svg
-                className={styles.rocketIcon}
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.5 16.53 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.54 9.46C13.76 8.68 13.76 7.41 14.54 6.63S16.59 5.85 17.37 6.63C18.14 7.41 18.14 8.68 17.37 9.46C16.59 10.24 15.32 10.24 14.54 9.46M8.88 16.53L7.47 15.12L8.88 16.53M6.24 22L9.88 18.36C9.54 18.27 9.21 18.12 8.91 17.91L4.83 22H6.24M2 22H3.41L8.18 17.24L6.76 15.83L2 20.59V22M2 19.17L6.09 15.09C5.88 14.79 5.73 14.47 5.64 14.12L2 17.76V19.17Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
-          </nav>
+          ))}
         </div>
       </div>
     </>

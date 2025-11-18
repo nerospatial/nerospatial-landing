@@ -1,0 +1,39 @@
+:root {
+  /* --- Nero Premium Palette --- */
+  
+  /* Backgrounds */
+  --bg-nero: #050505; /* Deepest black */
+  --bg-slate: #0a0a0f; /* Subtle blue-black tint */
+  --bg-surface: #121217; /* Card surface */
+  
+  /* Accents */
+  --accent-primary: #3b82f6; /* Electric Blue */
+  --accent-secondary: #8b5cf6; /* Violet */
+  --accent-glow: #60a5fa; /* Lighter blue for glows */
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(20, 20, 30, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-blur: 12px;
+  
+  /* Gradients */
+  --gradient-aurora: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  --gradient-dark: linear-gradient(to bottom, var(--bg-nero), var(--bg-slate));
+  
+  /* Animation */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+/* Dark Mode Overrides (if needed, but we are forcing dark mode) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Ensure consistency */
+  }
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { SnackbarProvider } from "./core/hooks/useSnackbar";
+import SmoothScroll from "@/components/core/SmoothScroll";
 
 const inter = Inter({
   variable: "--font-primary",
@@ -41,13 +42,15 @@ export const metadata: Metadata = {
   },
 };
 
+import Loader from "@/app/core/components/Loader";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="lenis">
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
@@ -57,7 +60,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
       >
-        <SnackbarProvider>{children}</SnackbarProvider>
+        <Loader />
+        <SmoothScroll>
+          <SnackbarProvider>{children}</SnackbarProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

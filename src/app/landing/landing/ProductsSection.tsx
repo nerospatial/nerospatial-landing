@@ -1,225 +1,115 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import MagicBento from "@/components/MagicBento";
-import type { BentoCardProps } from "@/components/MagicBento";
-import styles from "./ProductsSection.module.css";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { BentoGrid, BentoCard } from "@/components/magic-bento";
 
-// Constants - matching Vision/Purpose pattern
-const PURPOSE_START_OFFSET = 200; // vh
-const PURPOSE_START_MULTIPLIER = 0.98;
-const PURPOSE_HEIGHT = 800; // vh
-const VISION_HEIGHT = 300; // vh
-const PRODUCTS_HEIGHT = 300; // vh
-const PRODUCTS_FADE_IN_DURATION = 0.2; // 20% of section for fade in
+gsap.registerPlugin(ScrollTrigger);
+
+const products = [
+  {
+    title: "Spatial Companion",
+    description:
+      "An AI that understands your physical environment and provides context-aware assistance.",
+    icon: <span className="material-symbols-outlined">view_in_ar</span>,
+    colSpan: 2,
+    rowSpan: 2,
+    cta: "Learn More",
+    background: (
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20" />
+    ),
+  },
+  {
+    title: "Context Engine",
+    description:
+      "Real-time processing of spatial data to deliver hyper-relevant information.",
+    icon: <span className="material-symbols-outlined">psychology</span>,
+    colSpan: 1,
+    rowSpan: 1,
+    cta: "Explore API",
+  },
+  {
+    title: "Learning Ecosystem",
+    description:
+      "Adaptive learning pathways that evolve with your spatial interactions.",
+    icon: <span className="material-symbols-outlined">hub</span>,
+    colSpan: 1,
+    rowSpan: 1,
+    cta: "View Platform",
+  },
+  {
+    title: "Developer SDK",
+    description:
+      "Build your own spatial applications with our powerful set of tools and APIs.",
+    icon: <span className="material-symbols-outlined">code</span>,
+    colSpan: 3,
+    rowSpan: 1,
+    cta: "Start Building",
+    background: (
+      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10" />
+    ),
+  },
+];
 
 export default function ProductsSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rafIdRef = useRef<number | null>(null);
-  const gsapAnimationsRef = useRef<gsap.core.Tween[]>([]);
-  const reduceMotionRef = useRef<boolean>(false);
-  const viewportHeightRef = useRef(0);
-
-  const updateViewportCache = useCallback(() => {
-    if (typeof window === "undefined") return;
-    viewportHeightRef.current = window.innerHeight;
-  }, []);
-
-  // Kill all GSAP animations
-  const killAllAnimations = useCallback(() => {
-    gsapAnimationsRef.current.forEach((anim) => {
-      if (anim && anim.kill) anim.kill();
-    });
-    gsapAnimationsRef.current = [];
-  }, []);
+  const containerRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const title = titleRef.current;
+    const grid = gridRef.current;
 
-    // Set initial state
-    gsap.set(container, { opacity: 0, visibility: "hidden" });
+    if (!container || !title || !grid) return;
 
-    updateViewportCache();
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: "top center",
+        end: "bottom bottom",
+        toggleActions: "play none none reverse",
+      },
+    });
 
-    const handleScroll = () => {
-      // Kill any pending animations from previous scroll
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
+    tl.fromTo(
+      title,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+    ).fromTo(
+      grid.children,
+      { opacity: 0, y: 50, scale: 0.9 },
+      { opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 0.8, ease: "back.out(1.2)" },
+      "-=0.5"
+    );
 
-      rafIdRef.current = requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        updateViewportCache();
-        const viewportHeight = viewportHeightRef.current;
-
-        // Calculate Purpose section bounds
-        const purposeStart =
-          (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) /
-          100;
-        const purposeFullHeight = (PURPOSE_HEIGHT * viewportHeight) / 100;
-
-        // Vision section starts at Purpose phase 8 (90%)
-        const visionStartScroll = purposeStart + 0.9 * purposeFullHeight;
-        const visionEnd =
-          visionStartScroll + (VISION_HEIGHT * viewportHeight) / 100;
-
-        // Products section starts immediately after Vision ends
-        const productsStartScroll = visionEnd;
-        const productsEnd =
-          productsStartScroll + (PRODUCTS_HEIGHT * viewportHeight) / 100;
-
-        // Skip animations if reduced motion is preferred
-        if (reduceMotionRef.current) {
-          if (scrollY >= productsStartScroll) {
-            gsap.set(container, { opacity: 1, visibility: "visible" });
-          } else {
-            gsap.set(container, { opacity: 0, visibility: "hidden" });
-          }
-          return;
-        }
-
-        if (scrollY >= productsStartScroll && scrollY <= productsEnd) {
-          // Calculate progress through Products section (0 to 1)
-          const productsProgress =
-            (scrollY - productsStartScroll) /
-            (productsEnd - productsStartScroll);
-
-          // Fade in over the first 20% of Products section scroll
-          const fadeInProgress = Math.min(
-            productsProgress / PRODUCTS_FADE_IN_DURATION,
-            1
-          );
-
-          // Force complete fade out at 95% through Products section
-          let opacity = fadeInProgress;
-          if (productsProgress > 0.95) {
-            opacity = 0;
-          } else if (productsProgress > 0.9) {
-            // Quick fade out from 90% to 95%
-            const fadeOutProgress = (productsProgress - 0.9) / 0.05;
-            opacity = Math.max(0, fadeInProgress * (1 - fadeOutProgress));
-          }
-
-          const tween = gsap.to(container, {
-            opacity: opacity,
-            visibility: opacity > 0 ? "visible" : "hidden",
-            duration: 0.1,
-            ease: "none",
-          });
-          gsapAnimationsRef.current.push(tween);
-        } else if (scrollY > productsEnd) {
-          // Completely invisible after Products section ends
-          const tween = gsap.to(container, {
-            opacity: 0,
-            visibility: "hidden",
-            duration: 0.1,
-            ease: "none",
-          });
-          gsapAnimationsRef.current.push(tween);
-        } else if (scrollY < productsStartScroll && scrollY >= visionEnd) {
-          // Scrolling backward from Products to Vision - fade out as Vision fades in
-          const reverseProgress =
-            (productsStartScroll - scrollY) / (productsStartScroll - visionEnd);
-          const opacity = Math.max(0, 1 - reverseProgress);
-
-          const tween = gsap.to(container, {
-            opacity: opacity,
-            visibility: opacity > 0 ? "visible" : "hidden",
-            duration: 0.1,
-            ease: "none",
-          });
-          gsapAnimationsRef.current.push(tween);
-        } else if (scrollY < visionEnd) {
-          // Completely invisible when scrolling back past Vision section
-          const tween = gsap.to(container, {
-            opacity: 0,
-            visibility: "hidden",
-            duration: 0.1,
-            ease: "none",
-          });
-          gsapAnimationsRef.current.push(tween);
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial call
-
-    // Cleanup
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-      killAllAnimations();
+      tl.kill();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, [updateViewportCache, killAllAnimations]);
-
-  // Handle resize
-  useEffect(() => {
-    const handleResize = () => {
-      updateViewportCache();
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => window.removeEventListener("resize", handleResize);
-  }, [updateViewportCache]);
-
-  // NeroSpatial product data for MagicBento
-  // NeroSpatial product data for MagicBento
-  const productCards: BentoCardProps[] = [
-    {
-      color: "#1e293b",
-      title: "NeroDivine",
-      description: "AI toys teaching values through stories",
-      label: "Learning",
-      image: "/assets/landing/toy_image-nobg.png",
-      isSellable: true,
-    },
-    {
-      color: "#1e293b",
-      title: "AIAR",
-      description: "Augmented reality with AI-powered sensory experiences",
-      label: "Senses",
-      image: "/assets/landing/ai_ar_nobg.png",
-      isSellable: false,
-    },
-    {
-      color: "#1e293b",
-      title: "NeroGlasses",
-      description: "AIAR glasses bringing concepts to life visually",
-      label: "Vision",
-      image: "/assets/landing/glasses.png",
-      isSellable: true,
-    },
-    {
-      color: "#1e293b",
-      title: "NeroPersonas",
-      description: "Cloud AI mentors powering all NeroSpatial devices",
-      label: "AI Cloud",
-      image: "/assets/landing/nero-personas.png",
-      isSellable: false,
-    },
-  ];
+  }, []);
 
   return (
-    <section className={styles.section}>
-      <div ref={containerRef} className={styles.container}>
-        <h2 className={styles.title}>Product Shelf</h2>
-        <div className={styles.bentoWrapper}>
-          <MagicBento
-            cardData={productCards}
-            enableStars={false}
-            enableSpotlight={false}
-            enableBorderGlow={true}
-            enableTilt={true}
-            clickEffect={true}
-            enableMagnetism={true}
-            glowColor="96, 165, 250"
-            spotlightRadius={350}
-          />
-        </div>
+    <section
+      id="products"
+      ref={containerRef}
+      className="relative min-h-screen w-full flex flex-col items-center justify-center py-24 bg-[var(--bg-nero)]"
+      data-section="products"
+    >
+      <h2
+        ref={titleRef}
+        className="text-4xl md:text-6xl font-bold text-white mb-16 tracking-tight"
+      >
+        Our <span className="text-[var(--accent-primary)]">Products</span>
+      </h2>
+
+      <div ref={gridRef} className="w-full px-6">
+        <BentoGrid>
+          {products.map((product, i) => (
+            <BentoCard key={i} {...product} />
+          ))}
+        </BentoGrid>
       </div>
     </section>
   );

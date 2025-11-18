@@ -1,137 +1,88 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import styles from "./HeroSection.module.css";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useEffect, useRef } from "react";
+import { createTimeline } from "animejs";
+import SpatialBackground from "@/components/core/SpatialBackground";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 export default function HeroSection() {
-  const heroRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [isHidden, setIsHidden] = useState(false);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    const hero = heroRef.current;
-    const content = contentRef.current;
-
-    if (!hero || !content) return;
-
-    // Clear any previous ScrollTriggers
-    ScrollTrigger.getAll().forEach((t) => t.kill());
-
-    // Set initial state
-    gsap.set(content, {
-      scale: 1,
-      opacity: 1,
-      z: 0,
-    });
-
-    if (isMobile) {
-      // Simple fade out on scroll for mobile; no heavy scaling
-      const onScroll = () => {
-        const rect = hero.getBoundingClientRect();
-        const viewport = window.innerHeight;
-        const progress = Math.min(
-          1,
-          Math.max(0, (viewport - Math.max(0, rect.top)) / (viewport * 0.8))
-        );
-        const opacity = 1 - progress;
-        content.style.opacity = String(opacity);
-        if (opacity <= 0.02 && !isHidden) setIsHidden(true);
-        else if (opacity > 0.02 && isHidden) setIsHidden(false);
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll();
-      return () => {
-        window.removeEventListener("scroll", onScroll);
-      };
-    } else {
-      // Desktop: keep ScrollTrigger zoom/fade
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: hero,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.5,
-          onUpdate: (self) => {
-            if (self.progress >= 0.98) {
-              if (!isHidden) {
-                setIsHidden(true);
-              }
-            } else if (self.progress < 0.98) {
-              if (isHidden) {
-                setIsHidden(false);
-              }
-            }
-          },
-        },
-      });
-
-      tl.to(content, {
-        scale: 5.5,
-        opacity: 0,
-        z: 1000,
-        ease: "power2.inOut",
-      });
-
-      scrollTriggerRef.current = tl.scrollTrigger as ScrollTrigger;
-
-      return () => {
-        tl.kill();
-        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      };
+    // Text Reveal Animation
+    const title = titleRef.current;
+    if (title) {
+      // Wrap each letter in a span
+      title.innerHTML = title.textContent?.replace(/\S/g, "<span class='letter'>$&</span>") || "";
+      
+      createTimeline({ loop: false })
+        .add('.letter', {
+          translateY: [100, 0],
+          translateZ: 0,
+          opacity: [0, 1],
+          easing: "easeOutExpo",
+          duration: 1400,
+          delay: (_el: any, i: number) => 300 + 30 * i
+        })
+        .add(subtitleRef.current!, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          easing: "easeOutQuad",
+          duration: 800,
+        }, "-=1000")
+        .add(ctaRef.current!, {
+          opacity: [0, 1],
+          translateY: [20, 0],
+          easing: "easeOutQuad",
+          duration: 800,
+        }, "-=600");
     }
-  }, [isHidden]);
-
-  // Use a separate effect to handle the hiding
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
-
-    if (isHidden) {
-      // Force hide with multiple methods to ensure it stays hidden
-      content.style.cssText = `
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        display: none !important;
-      `;
-    } else {
-      // Reset to allow animation
-      content.style.cssText = `
-        opacity: "";
-        visibility: "";
-        pointer-events: "";
-        display: "";
-      `;
-    }
-  }, [isHidden]);
+  }, []);
 
   return (
-    <section ref={heroRef} className={styles.hero}>
-      <div ref={contentRef} className={styles.heroContent}>
-        <h1 className={styles.mainTitle}>NeroSpatial</h1>
-        <h2 className={styles.subtitle}>Building Spatially Aware AI Tutors</h2>
-        <div className={styles.scrollIndicator}>
-          <span className={styles.scrollText}>Explore the Vision</span>
-          <svg
-            className={styles.scrollArrow}
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+    <section className="relative h-screen w-full overflow-hidden flex flex-col justify-center items-center bg-black text-white">
+      {/* 3D Background */}
+      <SpatialBackground />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-7xl mx-auto">
+        <h1 
+          ref={titleRef} 
+          className="text-[12vw] leading-[0.8] font-black tracking-tighter uppercase mix-blend-difference overflow-hidden"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          NeroSpatial
+        </h1>
+        
+        <p 
+          ref={subtitleRef} 
+          className="mt-8 text-xl md:text-2xl font-light tracking-widest text-white/80 uppercase opacity-0"
+        >
+          Spatially Context Aware AI Companions
+        </p>
+
+        <div ref={ctaRef} className="mt-12 flex gap-6 opacity-0">
+          <MagneticButton 
+            className="px-8 py-4 bg-white text-black font-bold text-lg rounded-full hover:bg-gray-200 transition-colors"
+            strength={0.3}
           >
-            <path
-              d="M12 19L5 12L6.41 10.59L12 16.17L17.59 10.59L19 12L12 19Z"
-              fill="currentColor"
-            />
-          </svg>
+            Explore Vision
+          </MagneticButton>
+          <MagneticButton 
+            className="px-8 py-4 bg-transparent border border-white/20 text-white font-bold text-lg rounded-full hover:bg-white/10 transition-colors"
+            strength={0.3}
+          >
+            Watch Demo
+          </MagneticButton>
         </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+        <span className="text-xs uppercase tracking-widest">Scroll</span>
+        <div className="w-[1px] h-12 bg-white/50" />
       </div>
     </section>
   );

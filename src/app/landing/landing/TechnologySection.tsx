@@ -14,6 +14,7 @@ const TECHNOLOGY_HEIGHT = 800; // vh
 const TECHNOLOGY_FADE_IN_DURATION = 0.1; // 10% of section for fade in
 const TITLE_ANIMATION_DURATION = 0.25; // 25% of section for title animation (0 to 0.25)
 const CARDS_ANIMATION_START = 0.25; // Cards start animating at 25% of section
+const CONTACT_FADE_IN_DURATION = 0.7; // 70% of section for ContactSection fade in
 
 // Technology process data
 const technologySteps = [
@@ -141,11 +142,13 @@ export default function TechnologySection() {
           return;
         }
 
-        if (scrollY >= technologyStartScroll && scrollY <= technologyEnd) {
+        if (scrollY >= technologyStartScroll) {
           // Calculate progress through Technology section (0 to 1)
-          const technologyProgress =
+          const technologyProgress = Math.min(
             (scrollY - technologyStartScroll) /
-            (technologyEnd - technologyStartScroll);
+              (technologyEnd - technologyStartScroll),
+            1
+          );
 
           // Fade in over the first 10% of Technology section scroll
           const fadeProgress = Math.min(
@@ -153,139 +156,130 @@ export default function TechnologySection() {
             1
           );
 
-          gsap.set(container, {
-            opacity: fadeProgress,
-            visibility: fadeProgress > 0 ? "visible" : "hidden",
-          });
+          let opacity = fadeProgress;
 
-          // Phase 1: Title animation (0 to 25% of section) - from center to left with rotation
-          if (technologyProgress <= TITLE_ANIMATION_DURATION) {
-            const titleProgress = technologyProgress / TITLE_ANIMATION_DURATION;
-
-            // Calculate target position: move from center to left edge of spacer
-            // Title starts centered (50% of viewport), moves to left edge of spacer (12% from left)
-            const titleWidth = viewportWidth * 0.12; // 12% of viewport
-            const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
-            const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
-
-            // Animate: fade in, rotate -90°, and translate to left
-            gsap.set(titleRef.current, {
-              opacity: titleProgress,
-              visibility: titleProgress > 0 ? "visible" : "hidden",
-              x: titleProgress * targetX,
-              rotation: titleProgress * -90,
-              transformOrigin: "center center",
-            });
-          } else {
-            // Lock title in final state
-            const titleWidth = viewportWidth * 0.12;
-            const spacerLeft = titleWidth / 2;
-            const targetX = -viewportWidth / 2 + spacerLeft;
-            gsap.set(titleRef.current, {
-              opacity: 1,
-              visibility: "visible",
-              x: targetX,
-              rotation: -90,
-              transformOrigin: "center center",
-            });
+          // Start fading out when ContactSection begins to appear
+          if (scrollY >= technologyEnd) {
+            // Fade out completely over the same duration as ContactSection fades in
+            const fadeOutProgress = Math.min(
+              (scrollY - technologyEnd) /
+                (viewportHeight * CONTACT_FADE_IN_DURATION),
+              1
+            );
+            opacity = Math.max(0, fadeProgress * (1 - fadeOutProgress));
           }
 
-          // Phase 2: Cards animation (25% to end of section)
-          if (technologyProgress >= CARDS_ANIMATION_START) {
-            const cardsProgress =
-              (technologyProgress - CARDS_ANIMATION_START) /
-              (1 - CARDS_ANIMATION_START);
+          gsap.set(container, {
+            opacity: opacity,
+            visibility: opacity > 0 ? "visible" : "hidden",
+          });
 
-            // Fade in cards wrapper
-            gsap.set(cardsWrapperRef.current, {
-              opacity: Math.min(cardsProgress * 3, 1), // Quick fade in
-              visibility: "visible",
-            });
+          // Only run animations if we're still within the Technology section bounds
+          if (scrollY <= technologyEnd) {
+            // Phase 1: Title animation (0 to 25% of section) - from center to left with rotation
+            if (technologyProgress <= TITLE_ANIMATION_DURATION) {
+              const titleProgress =
+                technologyProgress / TITLE_ANIMATION_DURATION;
 
-            // Sequential card animations - cards animate in place (no movement)
-            const cardDuration = 1 / 6; // Each card takes 1/6 of the remaining animation time
+              // Calculate target position: move from center to left edge of spacer
+              // Title starts centered (50% of viewport), moves to left edge of spacer (12% from left)
+              const titleWidth = viewportWidth * 0.12; // 12% of viewport
+              const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
+              const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
 
-            cardRefs.current.forEach((card, index) => {
-              if (!card) return;
+              // Animate: fade in, rotate -90°, and translate to left
+              gsap.set(titleRef.current, {
+                opacity: titleProgress,
+                visibility: titleProgress > 0 ? "visible" : "hidden",
+                x: titleProgress * targetX,
+                rotation: titleProgress * -90,
+                transformOrigin: "center center",
+              });
+            } else {
+              // Lock title in final state
+              const titleWidth = viewportWidth * 0.12;
+              const spacerLeft = titleWidth / 2;
+              const targetX = -viewportWidth / 2 + spacerLeft;
+              gsap.set(titleRef.current, {
+                opacity: 1,
+                visibility: "visible",
+                x: targetX,
+                rotation: -90,
+                transformOrigin: "center center",
+              });
+            }
 
-              const cardStart = index * cardDuration;
-              const cardEnd = (index + 1) * cardDuration;
+            // Phase 2: Cards animation (25% to end of section)
+            if (technologyProgress >= CARDS_ANIMATION_START) {
+              const cardsProgress =
+                (technologyProgress - CARDS_ANIMATION_START) /
+                (1 - CARDS_ANIMATION_START);
 
-              if (cardsProgress >= cardStart && cardsProgress <= cardEnd) {
-                const cardProgress = (cardsProgress - cardStart) / cardDuration;
-                // Stamp effect: scale from 0.8 to 1.0, fade in opacity
-                const stampProgress = Math.min(cardProgress / 0.5, 1); // Stamp in first 50%
-                const scaleValue = 0.8 + (1 - 0.8) * stampProgress; // Scale from 0.8 to 1.0
-                const opacityValue = stampProgress;
+              // Fade in cards wrapper
+              gsap.set(cardsWrapperRef.current, {
+                opacity: Math.min(cardsProgress * 3, 1), // Quick fade in
+                visibility: "visible",
+              });
 
-                gsap.set(card, {
-                  opacity: opacityValue,
-                  visibility: "visible",
-                  scale: scaleValue,
-                });
-              } else if (cardsProgress < cardStart) {
-                // Before this card's animation starts
-                gsap.set(card, {
-                  opacity: 0,
-                  visibility: "hidden",
-                  scale: 0.8,
-                });
-              } else {
-                // After this card's animation completes - lock in final state
-                gsap.set(card, {
-                  opacity: 1,
-                  visibility: "visible",
-                  scale: 1,
-                });
-              }
-            });
-          } else {
-            // Hide cards before animation starts
-            gsap.set(cardsWrapperRef.current, {
-              opacity: 0,
-              visibility: "hidden",
-            });
-            // Reset all cards to initial state
-            cardRefs.current.forEach((card) => {
-              if (card) {
-                gsap.set(card, {
-                  opacity: 0,
-                  visibility: "hidden",
-                  scale: 0.8,
-                });
-              }
-            });
+              // Sequential card animations - cards animate in place (no movement)
+              const cardDuration = 1 / 6; // Each card takes 1/6 of the remaining animation time
+
+              cardRefs.current.forEach((card, index) => {
+                if (!card) return;
+
+                const cardStart = index * cardDuration;
+                const cardEnd = (index + 1) * cardDuration;
+
+                if (cardsProgress >= cardStart && cardsProgress <= cardEnd) {
+                  const cardProgress =
+                    (cardsProgress - cardStart) / cardDuration;
+                  // Stamp effect: scale from 0.8 to 1.0, fade in opacity
+                  const stampProgress = Math.min(cardProgress / 0.5, 1); // Stamp in first 50%
+                  const scaleValue = 0.8 + (1 - 0.8) * stampProgress; // Scale from 0.8 to 1.0
+                  const opacityValue = stampProgress;
+
+                  gsap.set(card, {
+                    opacity: opacityValue,
+                    visibility: "visible",
+                    scale: scaleValue,
+                  });
+                } else if (cardsProgress < cardStart) {
+                  // Before this card's animation starts
+                  gsap.set(card, {
+                    opacity: 0,
+                    visibility: "hidden",
+                    scale: 0.8,
+                  });
+                } else {
+                  // After this card's animation completes - lock in final state
+                  gsap.set(card, {
+                    opacity: 1,
+                    visibility: "visible",
+                    scale: 1,
+                  });
+                }
+              });
+            } else {
+              // Hide cards before animation starts
+              gsap.set(cardsWrapperRef.current, {
+                opacity: 0,
+                visibility: "hidden",
+              });
+              // Reset all cards to initial state
+              cardRefs.current.forEach((card) => {
+                if (card) {
+                  gsap.set(card, {
+                    opacity: 0,
+                    visibility: "hidden",
+                    scale: 0.8,
+                  });
+                }
+              });
+            }
           }
         } else if (scrollY < technologyStartScroll) {
           // Before Technology section
           gsap.set(container, { opacity: 0, visibility: "hidden" });
-        } else if (scrollY > technologyEnd) {
-          // After Technology section - keep final state
-          gsap.set(container, { opacity: 1, visibility: "visible" });
-          const titleWidth = viewportWidth * 0.12;
-          const spacerLeft = titleWidth / 2;
-          const targetX = -viewportWidth / 2 + spacerLeft;
-          gsap.set(titleRef.current, {
-            opacity: 1,
-            visibility: "visible",
-            x: targetX,
-            rotation: -90,
-            transformOrigin: "center center",
-          });
-          gsap.set(cardsWrapperRef.current, {
-            opacity: 1,
-            visibility: "visible",
-          });
-          // Ensure all cards are in final state
-          cardRefs.current.forEach((card) => {
-            if (card) {
-              gsap.set(card, {
-                opacity: 1,
-                visibility: "visible",
-                scale: 1,
-              });
-            }
-          });
         }
       });
     };

@@ -9,6 +9,7 @@ import PurposeSection from "@/app/landing/landing/PurposeSection";
 import VisionSection from "@/app/landing/landing/VisionSection";
 import ProductsSection from "@/app/landing/landing/ProductsSection";
 import TechnologySection from "@/app/landing/landing/TechnologySection";
+import ContactSection from "@/app/landing/landing/ContactSection";
 import styles from "./page.module.css";
 
 export default function Landing() {
@@ -39,6 +40,7 @@ export default function Landing() {
             <VisionSection />
             <ProductsSection />
             <TechnologySection />
+            <ContactSection />
           </div>
         </>
       )}

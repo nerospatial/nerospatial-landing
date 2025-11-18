@@ -29,19 +29,6 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const marqueeInnerRef = useRef<HTMLDivElement>(null);
-  const timelineRef = useRef<gsap.core.Timeline | null>(null);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      // Initialize timeline but pause it
-      timelineRef.current = gsap.timeline({ 
-        paused: true,
-        defaults: { duration: 0.6, ease: "expo.out" }
-      });
-    }, itemRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const findClosestEdge = (
     mouseX: number,
@@ -66,7 +53,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
       rect.height
     );
 
-    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: "expo.out" } });
+    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: "power3.out" } });
     
     tl.set(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" })
       .set(marqueeInnerRef.current, { y: edge === "top" ? "101%" : "-101%" })
@@ -84,7 +71,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
       rect.height
     );
 
-    const tl = gsap.timeline({ defaults: { duration: 0.6, ease: "expo.out" } });
+    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: "power3.out" } });
     
     tl.to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }).to(
       marqueeInnerRef.current,
@@ -98,11 +85,11 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const repeatedMarqueeContent = React.useMemo(() => {
     return Array.from({ length: 4 }).map((_, idx) => (
       <React.Fragment key={idx}>
-        <span className="text-[var(--bg-nero)] uppercase font-normal text-[4vh] leading-[1.2] p-[1vh_1vw_0]">
+        <span className="text-black uppercase font-bold text-[5vh] leading-[1.2] p-[1vh_1vw_0] tracking-tight">
           {text}
         </span>
         <div
-          className="w-[200px] h-[7vh] my-[2em] mx-[2vw] p-[1em_0] rounded-[50px] bg-cover bg-center border border-[var(--glass-border)]"
+          className="w-[250px] h-[8vh] my-[2em] mx-[2vw] rounded-full bg-cover bg-center border-2 border-black/10 grayscale group-hover:grayscale-0 transition-all duration-500"
           style={{ backgroundImage: `url(${image})` }}
         />
       </React.Fragment>
@@ -111,11 +98,11 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
 
   return (
     <div
-      className="flex-1 relative overflow-hidden text-center border-b border-[var(--glass-border)] group"
+      className="flex-1 relative overflow-hidden text-center border-b border-white/10 group hover:border-white/30 transition-colors duration-500"
       ref={itemRef}
     >
       <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-white text-[4vh] transition-colors duration-300 z-10"
+        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-bold text-white text-[5vh] transition-colors duration-300 z-10 group-hover:text-transparent"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

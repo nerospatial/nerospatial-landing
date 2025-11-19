@@ -1,30 +1,34 @@
 "use client";
 
 import React from "react";
-import MagneticButton from "@/components/ui/MagneticButton";
+import { motion } from "motion/react";
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 overflow-hidden bg-[var(--bg-nero)] pt-32 pb-10 border-t border-[var(--glass-border)]">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
-          {/* Brand */}
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold tracking-tighter text-white">
-              Nero<span className="text-[var(--accent-primary)]">Spatial</span>
-            </h2>
-            <p className="text-[var(--text-secondary)] max-w-xs">
-              Revolutionizing spatial intelligence with AR and AI technologies for immersive experiences.
+    <footer className="relative w-full bg-white text-black pt-24 pb-12 overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-6 flex flex-col justify-between min-h-[60vh]">
+        
+        {/* Top Section: Links */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-24">
+          {/* Brand / Mission */}
+          <div className="md:col-span-4 flex flex-col gap-6">
+            <span className="text-xs font-mono uppercase tracking-widest text-neutral-500">
+              Mission
+            </span>
+            <p className="text-xl md:text-2xl font-medium leading-tight max-w-sm">
+              Architecting the infrastructure for a spatially aware digital future.
             </p>
           </div>
 
-          {/* Links */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Platform</h3>
-            <ul className="space-y-4">
-              {["Products", "Solutions", "Technology", "Pricing"].map((item) => (
+          {/* Navigation Columns */}
+          <div className="md:col-span-2 md:col-start-7 flex flex-col gap-6">
+            <span className="text-xs font-mono uppercase tracking-widest text-neutral-500">
+              Platform
+            </span>
+            <ul className="flex flex-col gap-3">
+              {["NeroDivine", "AIAR", "NeroPersonas", "NeroGlasses"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">
+                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
                     {item}
                   </a>
                 </li>
@@ -32,12 +36,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Company</h3>
-            <ul className="space-y-4">
-              {["About", "Careers", "Blog", "Contact"].map((item) => (
+          <div className="md:col-span-2 flex flex-col gap-6">
+            <span className="text-xs font-mono uppercase tracking-widest text-neutral-500">
+              Company
+            </span>
+            <ul className="flex flex-col gap-3">
+              {["Vision", "Technology", "Careers", "Contact"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="text-[var(--text-secondary)] hover:text-white transition-colors">
+                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
                     {item}
                   </a>
                 </li>
@@ -45,34 +51,58 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Stay Updated</h3>
-            <div className="flex flex-col gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-[var(--bg-surface)] border border-[var(--glass-border)] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--accent-primary)] transition-colors"
-              />
-              <MagneticButton className="w-full bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-secondary)]">
-                Subscribe
-              </MagneticButton>
-            </div>
+          <div className="md:col-span-2 flex flex-col gap-6">
+            <span className="text-xs font-mono uppercase tracking-widest text-neutral-500">
+              Socials
+            </span>
+            <ul className="flex flex-col gap-3">
+              {["Twitter", "LinkedIn", "Instagram", "GitHub"].map((item) => (
+                <li key={item}>
+                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[var(--glass-border)]">
-          <p className="text-[var(--text-tertiary)] text-sm">
-            © {new Date().getFullYear()} NeroSpatial. All rights reserved.
-          </p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            {["Privacy Policy", "Terms of Service", "Cookies"].map((item) => (
-              <a key={item} href="#" className="text-[var(--text-tertiary)] text-sm hover:text-white transition-colors">
-                {item}
-              </a>
-            ))}
+        {/* Bottom Section: Massive Text */}
+        <div className="flex flex-col gap-8">
+          <div className="w-full h-[1px] bg-black/10" />
+          
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+            <div className="flex gap-6 text-sm font-mono text-neutral-500 uppercase tracking-wider">
+              <a href="#" className="hover:text-black transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-black transition-colors">Terms of Service</a>
+            </div>
+            <span className="text-sm font-mono text-neutral-500 uppercase tracking-wider">
+              © {new Date().getFullYear()} NeroSpatial Inc.
+            </span>
           </div>
+
+          <h1 
+            className="text-[10vw] leading-[0.8] font-black tracking-tighter uppercase text-center md:text-left mt-8 select-none flex flex-nowrap justify-center md:justify-start"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {"NeroSpatial".split("").map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ rotateY: 0 }}
+                whileInView={{ rotateY: 360 }}
+                viewport={{ once: false, margin: "-10%" }}
+                transition={{ 
+                  duration: 0.8, 
+                  ease: "easeInOut", 
+                  delay: index * 0.05 
+                }}
+                className="inline-block origin-center"
+                style={{ perspective: "1000px" }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </h1>
         </div>
       </div>
     </footer>

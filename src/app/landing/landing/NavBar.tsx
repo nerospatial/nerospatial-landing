@@ -130,6 +130,7 @@ export default function NavBar() {
                 { name: "Vision", href: "#vision" },
                 { name: "Products", href: "#products" },
                 { name: "Technology", href: "#technology" },
+                { name: "Contact", href: "#contact" },
               ].map((link) => (
                 <a
                   key={link.name}
@@ -147,12 +148,13 @@ export default function NavBar() {
             <div ref={ctaRef} className="flex items-center gap-4 pr-1">
               <div className="hidden md:block">
                 <MagneticButton
-                  className={`px-6 py-2 text-sm font-medium transition-all duration-300 rounded-full ${
+                  className={`px-4 py-1 text-sm font-medium transition-all duration-300 rounded-full ${
                     isScrolled
                       ? "bg-white text-black hover:bg-white/90"
                       : "bg-white/10 text-white hover:bg-white hover:text-black border border-white/10"
                   }`}
                   strength={0.2}
+                  onClick={(e) => scrollToSection(e, "#contact")}
                 >
                   Join Waitlist
                 </MagneticButton>
@@ -182,6 +184,7 @@ export default function NavBar() {
             { name: "Vision", href: "#vision" },
             { name: "Products", href: "#products" },
             { name: "Technology", href: "#technology" },
+            { name: "Contact", href: "#contact" },
           ].map((link) => (
             <a
               key={link.name}

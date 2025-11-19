@@ -36,12 +36,24 @@ export default function Landing() {
           <NavBar />
 
           <div className={styles.landing}>
-            <HeroSection />
-            <PurposeSection />
-            <VisionSection />
-            <ProductsSection />
-            <TechnologySection />
-            <ContactSection />
+            <section id="hero">
+              <HeroSection />
+            </section>
+            <section id="purpose">
+              <PurposeSection />
+            </section>
+            <section id="vision">
+              <VisionSection />
+            </section>
+            <section id="products">
+              <ProductsSection />
+            </section>
+            <section id="technology">
+              <TechnologySection />
+            </section>
+            <section id="contact">
+              <ContactSection />
+            </section>
             <Footer />
           </div>
         </>

@@ -10,6 +10,9 @@ interface Product {
   subtitle: string;
   description: string;
   image: string;
+  price: string;
+  status: "coming_soon" | "preorder" | "available";
+  link?: string;
 }
 
 interface MonochromeDeckProps {
@@ -19,6 +22,21 @@ interface MonochromeDeckProps {
 const MonochromeDeck: React.FC<MonochromeDeckProps> = ({ products }) => {
   const [activeId, setActiveId] = useState(products[0].id);
   const activeProduct = products.find((p) => p.id === activeId) || products[0];
+
+  const getButtonConfig = (status: Product["status"]) => {
+    switch (status) {
+      case "coming_soon":
+        return { text: "Coming Soon", disabled: true, style: "bg-white/5 text-white/40 cursor-not-allowed border-white/5" };
+      case "preorder":
+        return { text: "Preorder Now", disabled: false, style: "bg-white text-black hover:bg-neutral-200 border-white" };
+      case "available":
+        return { text: "Learn More", disabled: false, style: "bg-white text-black hover:bg-neutral-200 border-white" };
+      default:
+        return { text: "Coming Soon", disabled: true, style: "bg-white/5 text-white/40 cursor-not-allowed border-white/5" };
+    }
+  };
+
+  const btnConfig = getButtonConfig(activeProduct.status);
 
   return (
     <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 h-auto lg:h-[600px]">
@@ -91,7 +109,7 @@ const MonochromeDeck: React.FC<MonochromeDeckProps> = ({ products }) => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-6"
               >
                 <div className="flex items-center gap-4">
                   <span className="px-3 py-1 border border-white/20 rounded-full text-[10px] uppercase tracking-widest text-white/60">
@@ -102,6 +120,19 @@ const MonochromeDeck: React.FC<MonochromeDeckProps> = ({ products }) => {
                 <p className="text-lg md:text-xl text-neutral-400 font-light leading-relaxed max-w-xl">
                   {activeProduct.description}
                 </p>
+
+                {/* Pricing and Action */}
+                <div className="flex flex-row items-center gap-6 mt-4">
+                  <button
+                    disabled={btnConfig.disabled}
+                    className={`w-fit px-8 py-3 text-sm font-bold uppercase tracking-wider rounded-full border transition-all duration-300 ${btnConfig.style}`}
+                  >
+                    {btnConfig.text}
+                  </button>
+                  <span className="text-sm font-mono uppercase tracking-widest text-white/80">
+                    Starting @ {activeProduct.price}
+                  </span>
+                </div>
               </motion.div>
             </div>
           </motion.div>

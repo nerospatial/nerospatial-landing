@@ -14,6 +14,8 @@ const products = [
     subtitle: "Learning",
     description: "AI toys teaching values through stories. An interactive companion that grows with your child, fostering emotional intelligence and creativity through personalized storytelling.",
     image: "/assets/landing/toy_image-nobg.png",
+    price: "$50",
+    status: "coming_soon" as const,
   },
   {
     id: "neroglasses",
@@ -21,6 +23,8 @@ const products = [
     subtitle: "Vision",
     description: "AIAR glasses bringing concepts to life visually. See the world with new eyes through our advanced optical display system and real-time object recognition.",
     image: "/assets/landing/glasses.png",
+    price: "$299",
+    status: "coming_soon" as const,
   },
   {
     id: "neropersonas",
@@ -28,6 +32,8 @@ const products = [
     subtitle: "AI Cloud",
     description: "Cloud AI mentors powering all NeroSpatial devices. Your personal guide in the spatial web, adapting to your learning style and preferences over time.",
     image: "/assets/landing/nero-personas.png",
+    price: "$10/mo",
+    status: "coming_soon" as const,
   }
 ];
 

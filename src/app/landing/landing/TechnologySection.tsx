@@ -1,398 +1,114 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import styles from "./TechnologySection.module.css";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import NeuralPathway from "@/components/NeuralPathway";
 
-// Constants - matching Vision/Purpose pattern
-const PURPOSE_START_OFFSET = 200; // vh
-const PURPOSE_START_MULTIPLIER = 0.98;
-const PURPOSE_HEIGHT = 800; // vh
-const VISION_HEIGHT = 300; // vh
-const PRODUCTS_HEIGHT = 300; // vh
-const TECHNOLOGY_HEIGHT = 800; // vh
-const TECHNOLOGY_FADE_IN_DURATION = 0.1; // 10% of section for fade in
-const TITLE_ANIMATION_DURATION = 0.25; // 25% of section for title animation (0 to 0.25)
-const CARDS_ANIMATION_START = 0.25; // Cards start animating at 25% of section
+gsap.registerPlugin(ScrollTrigger);
 
-// Technology process data
-const technologySteps = [
+const steps = [
   {
-    id: 1,
     number: "01",
-    icon: "power_settings_new",
     title: "Wake Up",
-    description: "Device activates upon user interaction or specific triggers.",
-    colorScheme: "violet",
+    description: "Device activates upon user interaction or specific triggers, initiating the spatial awareness protocols.",
+    icon: "power_settings_new",
   },
   {
-    id: 2,
     number: "02",
-    icon: "visibility",
     title: "Sense",
-    description: "Gathers data from the environment via cameras and sensors.",
-    colorScheme: "cyan",
+    description: "Gathers high-fidelity data from the environment via advanced LiDAR, cameras, and audio sensors.",
+    icon: "visibility",
   },
   {
-    id: 3,
     number: "03",
-    icon: "fingerprint",
     title: "Personalize",
-    description: "Adapts to the user's unique preferences and learning style.",
-    colorScheme: "rose",
+    description: "Adapts to the user's unique preferences and learning style using on-device neural processing.",
+    icon: "fingerprint",
   },
   {
-    id: 4,
     number: "04",
-    icon: "psychology",
     title: "Understand",
-    description:
-      "The AI processes and interprets the collected data to find patterns and derive meaning, turning raw information into contextual knowledge.",
-    colorScheme: "emerald",
+    description: "Processes complex spatial and contextual data to find patterns and derive deep meaning.",
+    icon: "psychology",
   },
   {
-    id: 5,
     number: "05",
-    icon: "record_voice_over",
     title: "Respond",
-    description: "Delivers audio-visual feedback and guidance.",
-    colorScheme: "amber",
+    description: "Delivers intuitive audio-visual feedback and guidance through the spatial interface.",
+    icon: "record_voice_over",
   },
   {
-    id: 6,
     number: "06",
-    icon: "auto_graph",
     title: "Evolve",
-    description:
-      "Continuously learns from interactions to improve its performance and accuracy over time.",
-    colorScheme: "blue",
+    description: "Continuously learns from interactions to improve accuracy and helpfulness over time.",
+    icon: "auto_graph",
   },
 ];
 
 export default function TechnologySection() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const cardsWrapperRef = useRef<HTMLDivElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const rafIdRef = useRef<number | null>(null);
-  const gsapAnimationsRef = useRef<gsap.core.Tween[]>([]);
-  const reduceMotionRef = useRef<boolean>(false);
-  const viewportHeightRef = useRef(0);
-  const viewportWidthRef = useRef(0);
-
-  const updateViewportCache = useCallback(() => {
-    if (typeof window === "undefined") return;
-    viewportHeightRef.current = window.innerHeight;
-    viewportWidthRef.current = window.innerWidth;
-  }, []);
-
-  // Kill all GSAP animations
-  const killAllAnimations = useCallback(() => {
-    gsapAnimationsRef.current.forEach((anim) => {
-      if (anim && anim.kill) anim.kill();
-    });
-    gsapAnimationsRef.current = [];
-  }, []);
+  const pathwayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    const title = titleRef.current;
+    const pathway = pathwayRef.current;
 
-    // Set initial state
-    gsap.set(container, { opacity: 0, visibility: "hidden" });
+    if (!container || !title || !pathway) return;
 
-    updateViewportCache();
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: "top center",
+        end: "bottom bottom",
+        toggleActions: "play none none reverse",
+      },
+    });
 
-    const handleScroll = () => {
-      // Kill any pending animations from previous scroll
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
+    tl.fromTo(
+      title,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }
+    ).fromTo(
+      pathway,
+      { opacity: 0 },
+      { opacity: 1, duration: 1.5, ease: "power2.out" },
+      "-=0.5"
+    );
 
-      rafIdRef.current = requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        updateViewportCache();
-        const viewportHeight = viewportHeightRef.current;
-        const viewportWidth = viewportWidthRef.current;
-
-        // Calculate Purpose section bounds
-        const purposeStart =
-          (PURPOSE_START_OFFSET * viewportHeight * PURPOSE_START_MULTIPLIER) /
-          100;
-        const purposeFullHeight = (PURPOSE_HEIGHT * viewportHeight) / 100;
-
-        // Vision section starts at Purpose phase 8 (90%)
-        const visionStartScroll = purposeStart + 0.9 * purposeFullHeight;
-        const visionEnd =
-          visionStartScroll + (VISION_HEIGHT * viewportHeight) / 100;
-
-        // Products section starts immediately after Vision ends
-        const productsStartScroll = visionEnd;
-        const productsEnd =
-          productsStartScroll + (PRODUCTS_HEIGHT * viewportHeight) / 100;
-
-        // Technology section starts immediately after Products ends
-        const technologyStartScroll = productsEnd;
-        const technologyEnd =
-          technologyStartScroll + (TECHNOLOGY_HEIGHT * viewportHeight) / 100;
-
-        // Skip animations if reduced motion is preferred
-        if (reduceMotionRef.current) {
-          if (scrollY >= technologyStartScroll) {
-            gsap.set(container, { opacity: 1, visibility: "visible" });
-            const titleWidth = viewportWidth * 0.08;
-            const spacerLeft = titleWidth / 2;
-            const targetX = -viewportWidth / 2 + spacerLeft;
-            gsap.set(titleRef.current, {
-              opacity: 1,
-              visibility: "visible",
-              x: targetX,
-              rotation: -90,
-              transformOrigin: "center center",
-            });
-            gsap.set(cardsWrapperRef.current, {
-              opacity: 1,
-              visibility: "visible",
-            });
-          } else {
-            gsap.set(container, { opacity: 0, visibility: "hidden" });
-          }
-          return;
-        }
-
-        if (scrollY >= technologyStartScroll && scrollY <= technologyEnd) {
-          // Calculate progress through Technology section (0 to 1)
-          const technologyProgress =
-            (scrollY - technologyStartScroll) /
-            (technologyEnd - technologyStartScroll);
-
-          // Fade in over the first 10% of Technology section scroll
-          const fadeProgress = Math.min(
-            technologyProgress / TECHNOLOGY_FADE_IN_DURATION,
-            1
-          );
-
-          gsap.set(container, {
-            opacity: fadeProgress,
-            visibility: fadeProgress > 0 ? "visible" : "hidden",
-          });
-
-          // Phase 1: Title animation (0 to 25% of section) - from center to left with rotation
-          if (technologyProgress <= TITLE_ANIMATION_DURATION) {
-            const titleProgress = technologyProgress / TITLE_ANIMATION_DURATION;
-
-            // Calculate target position: move from center to left edge of spacer
-            // Title starts centered (50% of viewport), moves to left edge of spacer (8% from left)
-            const titleWidth = viewportWidth * 0.08; // 8% of viewport
-            const spacerLeft = titleWidth / 2; // Left edge of spacer (center of title width)
-            const targetX = -viewportWidth / 2 + spacerLeft; // Move from center to spacer left edge
-
-            // Animate: fade in, rotate -90°, and translate to left
-            gsap.set(titleRef.current, {
-              opacity: titleProgress,
-              visibility: titleProgress > 0 ? "visible" : "hidden",
-              x: titleProgress * targetX,
-              rotation: titleProgress * -90,
-              transformOrigin: "center center",
-            });
-          } else {
-            // Lock title in final state
-            const titleWidth = viewportWidth * 0.08;
-            const spacerLeft = titleWidth / 2;
-            const targetX = -viewportWidth / 2 + spacerLeft;
-            gsap.set(titleRef.current, {
-              opacity: 1,
-              visibility: "visible",
-              x: targetX,
-              rotation: -90,
-              transformOrigin: "center center",
-            });
-          }
-
-          // Phase 2: Cards animation (25% to end of section)
-          if (technologyProgress >= CARDS_ANIMATION_START) {
-            const cardsProgress =
-              (technologyProgress - CARDS_ANIMATION_START) /
-              (1 - CARDS_ANIMATION_START);
-
-            // Fade in cards wrapper
-            gsap.set(cardsWrapperRef.current, {
-              opacity: Math.min(cardsProgress * 3, 1), // Quick fade in
-              visibility: "visible",
-            });
-
-            // Sequential card animations - cards animate in place (no movement)
-            const cardDuration = 1 / 6; // Each card takes 1/6 of the remaining animation time
-
-            cardRefs.current.forEach((card, index) => {
-              if (!card) return;
-
-              const cardStart = index * cardDuration;
-              const cardEnd = (index + 1) * cardDuration;
-
-              if (cardsProgress >= cardStart && cardsProgress <= cardEnd) {
-                const cardProgress = (cardsProgress - cardStart) / cardDuration;
-                // Stamp effect: scale from 0.8 to 1.0, fade in opacity
-                const stampProgress = Math.min(cardProgress / 0.5, 1); // Stamp in first 50%
-                const scaleValue = 0.8 + (1 - 0.8) * stampProgress; // Scale from 0.8 to 1.0
-                const opacityValue = stampProgress;
-
-                gsap.set(card, {
-                  opacity: opacityValue,
-                  visibility: "visible",
-                  scale: scaleValue,
-                });
-              } else if (cardsProgress < cardStart) {
-                // Before this card's animation starts
-                gsap.set(card, {
-                  opacity: 0,
-                  visibility: "hidden",
-                  scale: 0.8,
-                });
-              } else {
-                // After this card's animation completes - lock in final state
-                gsap.set(card, {
-                  opacity: 1,
-                  visibility: "visible",
-                  scale: 1,
-                });
-              }
-            });
-          } else {
-            // Hide cards before animation starts
-            gsap.set(cardsWrapperRef.current, {
-              opacity: 0,
-              visibility: "hidden",
-            });
-            // Reset all cards to initial state
-            cardRefs.current.forEach((card) => {
-              if (card) {
-                gsap.set(card, {
-                  opacity: 0,
-                  visibility: "hidden",
-                  scale: 0.8,
-                });
-              }
-            });
-          }
-        } else if (scrollY < technologyStartScroll) {
-          // Before Technology section
-          gsap.set(container, { opacity: 0, visibility: "hidden" });
-        } else if (scrollY > technologyEnd) {
-          // After Technology section - keep final state
-          gsap.set(container, { opacity: 1, visibility: "visible" });
-          const titleWidth = viewportWidth * 0.08;
-          const spacerLeft = titleWidth / 2;
-          const targetX = -viewportWidth / 2 + spacerLeft;
-          gsap.set(titleRef.current, {
-            opacity: 1,
-            visibility: "visible",
-            x: targetX,
-            rotation: -90,
-            transformOrigin: "center center",
-          });
-          gsap.set(cardsWrapperRef.current, {
-            opacity: 1,
-            visibility: "visible",
-          });
-          // Ensure all cards are in final state
-          cardRefs.current.forEach((card) => {
-            if (card) {
-              gsap.set(card, {
-                opacity: 1,
-                visibility: "visible",
-                scale: 1,
-              });
-            }
-          });
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial call
-
-    // Cleanup
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current !== null) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-      killAllAnimations();
-    };
-  }, [updateViewportCache, killAllAnimations]);
-
-  // Handle resize
-  useEffect(() => {
-    const handleResize = () => {
-      updateViewportCache();
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => window.removeEventListener("resize", handleResize);
-  }, [updateViewportCache]);
-
-  // Accessibility and motion preference
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateReduce = () => {
-      reduceMotionRef.current = media.matches;
-    };
-    if (media.addEventListener) {
-      media.addEventListener("change", updateReduce);
-    } else {
-      media.addListener(updateReduce);
-    }
-    updateReduce();
-    return () => {
-      if (media.removeEventListener) {
-        media.removeEventListener("change", updateReduce);
-      } else {
-        media.removeListener(updateReduce);
-      }
+      tl.kill();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
   return (
-    <section className={styles.section}>
-      <div ref={containerRef} className={styles.container}>
-        <div className={styles.titleSpacer}></div>
-        <h2 ref={titleRef} className={styles.title}>
-          How It Works
-        </h2>
-        <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
-          <div ref={cardsContainerRef} className={styles.cardsContainer}>
-            {technologySteps.map((step, i) => (
-              <div
-                key={step.id}
-                ref={(el) => {
-                  cardRefs.current[i] = el;
-                }}
-                className={`${styles.card} ${
-                  styles[
-                    `card${
-                      step.colorScheme.charAt(0).toUpperCase() +
-                      step.colorScheme.slice(1)
-                    }`
-                  ]
-                }`}
-                data-color={step.colorScheme}
-              >
-                <div className={styles.cardContent}>
-                  <div className={styles.cardHeader}>
-                    <span
-                      className={`material-symbols-outlined ${styles.cardIcon}`}
-                    >
-                      {step.icon}
-                    </span>
-                    <span className={styles.cardNumber}>{step.number}</span>
-                  </div>
-                  <h3 className={styles.cardTitle}>{step.title}</h3>
-                  <p className={styles.cardDescription}>{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+    <section
+      id="technology"
+      ref={containerRef}
+      className="relative w-full flex flex-col items-center justify-start py-32 bg-black overflow-hidden"
+    >
+      {/* Background Elements - Subtle Monochrome */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900/20 via-black to-black pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-7xl px-6 flex flex-col gap-12">
+        <div className="flex flex-col items-center text-center">
+          <h2
+            ref={titleRef}
+            className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase mb-8 opacity-0"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            The <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Neural Path</span>
+          </h2>
+          <p className="text-neutral-400 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+            Tracing the flow of intelligence from perception to action.
+          </p>
+        </div>
+
+        <div ref={pathwayRef} className="w-full opacity-0">
+          <NeuralPathway steps={steps} />
         </div>
       </div>
     </section>

@@ -3,7 +3,42 @@
 import React from "react";
 import { motion } from "motion/react";
 
+import { useLenis } from "@/components/core/SmoothScroll";
+
 export default function Footer() {
+  const lenis = useLenis();
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    
+    // Map link names to section IDs
+    const sectionMap: { [key: string]: string } = {
+      "Vision": "#vision",
+      "Technology": "#technology",
+      "Contact": "#contact",
+      "NeroDivine": "#products", 
+      "NeroPersonas": "#products",
+      "NeroGlasses": "#products"
+    };
+
+    const targetId = sectionMap[id];
+
+    if (targetId) {
+      if (lenis) {
+        lenis.scrollTo(targetId, { offset: 0, duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      } else {
+        const element = document.querySelector(targetId);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // Scroll to top for non-existent sections
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
   return (
     <footer className="relative w-full bg-white text-black pt-24 pb-12 overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-6 flex flex-col justify-between min-h-[60vh]">
@@ -26,9 +61,13 @@ export default function Footer() {
               Platform
             </span>
             <ul className="flex flex-col gap-3">
-              {["NeroDivine", "AIAR", "NeroPersonas", "NeroGlasses"].map((item) => (
+              {["NeroDivine", "NeroGlasses","NeroPersonas"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
+                  <a 
+                    href="#" 
+                    onClick={(e) => scrollToSection(e, item)}
+                    className="text-lg font-bold hover:text-neutral-500 transition-colors"
+                  >
                     {item}
                   </a>
                 </li>
@@ -43,7 +82,11 @@ export default function Footer() {
             <ul className="flex flex-col gap-3">
               {["Vision", "Technology", "Careers", "Contact"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
+                  <a 
+                    href="#" 
+                    onClick={(e) => scrollToSection(e, item)}
+                    className="text-lg font-bold hover:text-neutral-500 transition-colors"
+                  >
                     {item}
                   </a>
                 </li>
@@ -56,10 +99,18 @@ export default function Footer() {
               Socials
             </span>
             <ul className="flex flex-col gap-3">
-              {["Twitter", "LinkedIn", "Instagram", "GitHub"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-lg font-bold hover:text-neutral-500 transition-colors">
-                    {item}
+              {[
+                { name: "Twitter", href: "https://x.com/NeroSpatial" },
+                { name: "LinkedIn", href: "https://www.linkedin.com/company/nerospatial/" }
+              ].map((item) => (
+                <li key={item.name}>
+                  <a 
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-lg font-bold hover:text-neutral-500 transition-colors"
+                  >
+                    {item.name}
                   </a>
                 </li>
               ))}

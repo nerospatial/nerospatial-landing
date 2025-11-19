@@ -54,3 +54,28 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px; /* For horizontal scrollbar if needed */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Subtle thumb */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Prevent horizontal scroll caused by scrollbar */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}

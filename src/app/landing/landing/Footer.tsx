@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 import { useLenis } from "@/components/core/SmoothScroll";
 
@@ -124,8 +125,8 @@ export default function Footer() {
           
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
             <div className="flex gap-6 text-sm font-mono text-neutral-500 uppercase tracking-wider">
-              <a href="#" className="hover:text-black transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-black transition-colors">Terms of Service</a>
+<Link href="/privacy-policy" className="hover:text-black transition-colors">Privacy Policy</Link>
+                <Link href="/terms-of-service" className="hover:text-black transition-colors">Terms of Service</Link>
             </div>
             <span className="text-sm font-mono text-neutral-500 uppercase tracking-wider">
               © {new Date().getFullYear()} NeroSpatial Inc.

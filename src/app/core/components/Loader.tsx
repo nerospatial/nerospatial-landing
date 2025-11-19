@@ -7,24 +7,51 @@ import styles from "./Loader.module.css";
 interface LoaderProps {
   onComplete?: () => void;
   duration?: number;
+  images?: string[];
 }
 
-export default function Loader({ onComplete, duration = 3000 }: LoaderProps) {
+export default function Loader({ onComplete, duration = 3000, images = [] }: LoaderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showCountUp, setShowCountUp] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const startTime = Date.now();
+
+    const preloadImages = async () => {
+      if (!images || images.length === 0) return;
+
+      const imagePromises = images.map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = resolve; // Resolve even on error to avoid blocking
+        });
+      });
+
+      await Promise.all(imagePromises);
+    };
+
+    const runLoader = async () => {
+      // Start preloading images
+      const imageLoadPromise = preloadImages();
+      
+      // Wait for minimum duration
+      const timerPromise = new Promise((resolve) => setTimeout(resolve, duration));
+
+      // Wait for both
+      await Promise.all([imageLoadPromise, timerPromise]);
+
+      // Finish up
       setShowCountUp(false);
-      // Wait 100ms after CountUp completes before hiding loader
       setTimeout(() => {
         setIsLoading(false);
         onComplete?.();
       }, 100);
-    }, duration);
+    };
 
-    return () => clearTimeout(timer);
-  }, [duration, onComplete]);
+    runLoader();
+  }, [duration, onComplete, images]);
 
   if (!isLoading) return null;
 

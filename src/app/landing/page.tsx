@@ -20,9 +20,15 @@ export default function Landing() {
     setIsLoaded(true);
   };
 
+  const productImages = [
+    "/assets/landing/toy_image-nobg.png",
+    "/assets/landing/glasses.png",
+    "/assets/landing/nero-personas.png"
+  ];
+
   return (
     <>
-      <Loader onComplete={handleLoaderComplete} />
+      <Loader onComplete={handleLoaderComplete} images={productImages} />
       {isLoaded && (
         <>
           <div className={styles.auroraBackground}>

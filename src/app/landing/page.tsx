@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Loader from "../core/components/Loader";
 import Aurora from "@/components/Aurora";
-import HeroSection from "@/app/landing/landing/HeroSection";
-import NavBar from "@/app/landing/landing/NavBar";
-import PurposeSection from "@/app/landing/landing/PurposeSection";
-import VisionSection from "@/app/landing/landing/VisionSection";
-import ProductsSection from "@/app/landing/landing/ProductsSection";
-import TechnologySection from "@/app/landing/landing/TechnologySection";
+import HeroSection from "./landing/HeroSection";
+import NavBar from "./landing/NavBar";
+import PurposeSection from "./landing/PurposeSection";
+import VisionSection from "./landing/VisionSection";
+import ProductsSection from "./landing/ProductsSection";
+import TechnologySection from "./landing/TechnologySection";
+import ContactSection from "./landing/ContactSection";
 import styles from "./page.module.css";
 
 export default function Landing() {
@@ -39,6 +40,7 @@ export default function Landing() {
             <VisionSection />
             <ProductsSection />
             <TechnologySection />
+            <ContactSection />
           </div>
         </>
       )}

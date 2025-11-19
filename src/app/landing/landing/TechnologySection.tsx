@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import GlassCard from "@/components/ui/GlassCard";
+import NeuralPathway from "@/components/NeuralPathway";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,37 +11,37 @@ const steps = [
   {
     number: "01",
     title: "Wake Up",
-    description: "Device activates upon user interaction or specific triggers.",
+    description: "Device activates upon user interaction or specific triggers, initiating the spatial awareness protocols.",
     icon: "power_settings_new",
   },
   {
     number: "02",
     title: "Sense",
-    description: "Gathers data from the environment via cameras and sensors.",
+    description: "Gathers high-fidelity data from the environment via advanced LiDAR, cameras, and audio sensors.",
     icon: "visibility",
   },
   {
     number: "03",
     title: "Personalize",
-    description: "Adapts to the user's unique preferences and learning style.",
+    description: "Adapts to the user's unique preferences and learning style using on-device neural processing.",
     icon: "fingerprint",
   },
   {
     number: "04",
     title: "Understand",
-    description: "Processes data to find patterns and derive meaning.",
+    description: "Processes complex spatial and contextual data to find patterns and derive deep meaning.",
     icon: "psychology",
   },
   {
     number: "05",
     title: "Respond",
-    description: "Delivers audio-visual feedback and guidance.",
+    description: "Delivers intuitive audio-visual feedback and guidance through the spatial interface.",
     icon: "record_voice_over",
   },
   {
     number: "06",
     title: "Evolve",
-    description: "Continuously learns from interactions to improve over time.",
+    description: "Continuously learns from interactions to improve accuracy and helpfulness over time.",
     icon: "auto_graph",
   },
 ];
@@ -49,37 +49,32 @@ const steps = [
 export default function TechnologySection() {
   const containerRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const pathwayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     const title = titleRef.current;
-    const cards = cardsRef.current;
+    const pathway = pathwayRef.current;
 
-    if (!container || !title || !cards) return;
+    if (!container || !title || !pathway) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
-        start: "top top",
-        end: "+=150%", // Pin for 150vh
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
+        start: "top center",
+        end: "bottom bottom",
+        toggleActions: "play none none reverse",
       },
     });
 
-    // 1. Title Animation
     tl.fromTo(
       title,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
-    )
-    // 2. Cards Stagger Animation
-    .fromTo(
-      cards.children,
-      { opacity: 0, y: 100, rotateX: -10 },
-      { opacity: 1, y: 0, rotateX: 0, stagger: 0.2, duration: 1.5, ease: "power3.out" },
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }
+    ).fromTo(
+      pathway,
+      { opacity: 0 },
+      { opacity: 1, duration: 1.5, ease: "power2.out" },
       "-=0.5"
     );
 
@@ -93,39 +88,28 @@ export default function TechnologySection() {
     <section
       id="technology"
       ref={containerRef}
-      className="relative h-screen w-full flex flex-col items-center justify-center py-24 bg-[var(--bg-nero)] overflow-hidden"
+      className="relative w-full flex flex-col items-center justify-start py-32 bg-black overflow-hidden"
     >
-      <h2
-        ref={titleRef}
-        className="text-4xl md:text-6xl font-bold text-white mb-16 tracking-tight text-center"
-      >
-        How It <span className="text-[var(--accent-primary)]">Works</span>
-      </h2>
+      {/* Background Elements - Subtle Monochrome */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900/20 via-black to-black pointer-events-none" />
 
-      <div
-        ref={cardsRef}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl px-6 w-full"
-      >
-        {steps.map((step, i) => (
-          <GlassCard
-            key={i}
-            className="p-8 flex flex-col gap-4 min-h-[240px] group"
-            spotlightColor="rgba(59, 130, 246, 0.1)"
+      <div className="relative z-10 w-full max-w-7xl px-6 flex flex-col gap-12">
+        <div className="flex flex-col items-center text-center">
+          <h2
+            ref={titleRef}
+            className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase mb-8 opacity-0"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-5xl font-bold text-[var(--text-tertiary)] group-hover:text-[var(--accent-primary)] transition-colors duration-500">
-                {step.number}
-              </span>
-              <span className="material-symbols-outlined text-3xl text-[var(--text-secondary)]">
-                {step.icon}
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white">{step.title}</h3>
-            <p className="text-[var(--text-secondary)] leading-relaxed">
-              {step.description}
-            </p>
-          </GlassCard>
-        ))}
+            The <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Neural Path</span>
+          </h2>
+          <p className="text-neutral-400 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+            Tracing the flow of intelligence from perception to action.
+          </p>
+        </div>
+
+        <div ref={pathwayRef} className="w-full opacity-0">
+          <NeuralPathway steps={steps} />
+        </div>
       </div>
     </section>
   );

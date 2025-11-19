@@ -3,66 +3,45 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { BentoGrid, BentoCard } from "@/components/magic-bento";
+import MonochromeDeck from "@/components/MonochromeDeck";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const products = [
   {
-    title: "Spatial Companion",
-    description:
-      "An AI that understands your physical environment and provides context-aware assistance.",
-    icon: <span className="material-symbols-outlined">view_in_ar</span>,
-    colSpan: 2,
-    rowSpan: 2,
-    cta: "Learn More",
-    background: (
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20" />
-    ),
+    id: "nerodivine",
+    title: "NeroDivine",
+    subtitle: "Learning",
+    description: "AI toys teaching values through stories. An interactive companion that grows with your child, fostering emotional intelligence and creativity through personalized storytelling.",
+    image: "/assets/landing/toy_image-nobg.png",
   },
   {
-    title: "Context Engine",
-    description:
-      "Real-time processing of spatial data to deliver hyper-relevant information.",
-    icon: <span className="material-symbols-outlined">psychology</span>,
-    colSpan: 1,
-    rowSpan: 1,
-    cta: "Explore API",
+    id: "neroglasses",
+    title: "NeroGlasses",
+    subtitle: "Vision",
+    description: "AIAR glasses bringing concepts to life visually. See the world with new eyes through our advanced optical display system and real-time object recognition.",
+    image: "/assets/landing/glasses.png",
   },
   {
-    title: "Learning Ecosystem",
-    description:
-      "Adaptive learning pathways that evolve with your spatial interactions.",
-    icon: <span className="material-symbols-outlined">hub</span>,
-    colSpan: 1,
-    rowSpan: 1,
-    cta: "View Platform",
-  },
-  {
-    title: "Developer SDK",
-    description:
-      "Build your own spatial applications with our powerful set of tools and APIs.",
-    icon: <span className="material-symbols-outlined">code</span>,
-    colSpan: 3,
-    rowSpan: 1,
-    cta: "Start Building",
-    background: (
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10" />
-    ),
-  },
+    id: "neropersonas",
+    title: "NeroPersonas",
+    subtitle: "AI Cloud",
+    description: "Cloud AI mentors powering all NeroSpatial devices. Your personal guide in the spatial web, adapting to your learning style and preferences over time.",
+    image: "/assets/landing/nero-personas.png",
+  }
 ];
 
 export default function ProductsSection() {
   const containerRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const deckRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     const title = titleRef.current;
-    const grid = gridRef.current;
+    const deck = deckRef.current;
 
-    if (!container || !title || !grid) return;
+    if (!container || !title || !deck) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -75,13 +54,13 @@ export default function ProductsSection() {
 
     tl.fromTo(
       title,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }
     ).fromTo(
-      grid.children,
-      { opacity: 0, y: 50, scale: 0.9 },
-      { opacity: 1, y: 0, scale: 1, stagger: 0.1, duration: 0.8, ease: "back.out(1.2)" },
-      "-=0.5"
+      deck,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
+      "-=0.8"
     );
 
     return () => {
@@ -94,22 +73,28 @@ export default function ProductsSection() {
     <section
       id="products"
       ref={containerRef}
-      className="relative min-h-screen w-full flex flex-col items-center justify-center py-24 bg-[var(--bg-nero)]"
-      data-section="products"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center py-32 bg-black overflow-hidden"
     >
-      <h2
-        ref={titleRef}
-        className="text-4xl md:text-6xl font-bold text-white mb-16 tracking-tight"
-      >
-        Our <span className="text-[var(--accent-primary)]">Products</span>
-      </h2>
+      {/* Background Elements - Subtle Monochrome */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900/20 via-black to-black pointer-events-none" />
 
-      <div ref={gridRef} className="w-full px-6">
-        <BentoGrid>
-          {products.map((product, i) => (
-            <BentoCard key={i} {...product} />
-          ))}
-        </BentoGrid>
+      <div className="relative z-10 w-full max-w-7xl px-6 flex flex-col gap-24">
+        <div className="flex flex-col items-center text-center">
+          <h2
+            ref={titleRef}
+            className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase mb-8 opacity-0"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            The <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Products</span>
+          </h2>
+          <p className="text-neutral-400 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+            Precision-engineered hardware and software, designed to seamlessly integrate into your reality.
+          </p>
+        </div>
+
+        <div ref={deckRef} className="w-full opacity-0">
+          <MonochromeDeck products={products} />
+        </div>
       </div>
     </section>
   );

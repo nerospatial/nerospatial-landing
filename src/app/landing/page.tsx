@@ -59,7 +59,7 @@ export default function Landing() {
             </section>
             <section id="contact">
               <ContactSection />
-            </section>
+            </section> 
             <Footer />
           </div>
         </>

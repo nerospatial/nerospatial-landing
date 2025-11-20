@@ -1,11 +1,25 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
-
+import { submitWaitlist } from "../../actions";
 
 export default function ContactSection() {
   const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  const handleSubmit = async (formData: FormData) => {
+    setMessage(null);
+    startTransition(async () => {
+      const result = await submitWaitlist(formData);
+      if (result.error) {
+        setMessage({ type: 'error', text: result.error });
+      } else {
+        setMessage({ type: 'success', text: "You're on the list! We'll be in touch." });
+      }
+    });
+  };
 
   return (
     <section className="relative w-full h-screen flex flex-col md:flex-row bg-black overflow-hidden">
@@ -39,15 +53,52 @@ export default function ContactSection() {
                 <p className="text-neutral-400 font-light mb-6">
                   Be the first to experience the next generation of spatial computing.
                 </p>
-                <form className="w-full flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
+                <form action={handleSubmit} className="w-full flex flex-col gap-4">
+                  <div className="flex gap-4 mb-2">
+                    <label className="flex-1 cursor-pointer group">
+                      <input 
+                        type="radio" 
+                        name="type" 
+                        value="glasses" 
+                        className="peer sr-only" 
+                        defaultChecked
+                      />
+                      <div className="w-full py-3 border border-white/20 text-center text-white/50 text-xs font-mono uppercase tracking-widest peer-checked:bg-white peer-checked:text-black peer-checked:border-white transition-all group-hover:border-white/50">
+                        Glasses
+                      </div>
+                    </label>
+                    <label className="flex-1 cursor-pointer group">
+                      <input 
+                        type="radio" 
+                        name="type" 
+                        value="toys" 
+                        className="peer sr-only" 
+                      />
+                      <div className="w-full py-3 border border-white/20 text-center text-white/50 text-xs font-mono uppercase tracking-widest peer-checked:bg-white peer-checked:text-black peer-checked:border-white transition-all group-hover:border-white/50">
+                        Toys
+                      </div>
+                    </label>
+                  </div>
                   <input 
+                    name="email"
                     type="email" 
+                    required
                     placeholder="ENTER YOUR EMAIL" 
-                    className="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors font-mono text-sm"
+                    className="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors font-mono text-sm disabled:opacity-50"
+                    disabled={isPending}
                   />
-                  <button className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-neutral-200 transition-colors mt-4">
-                    Request Access
+                  <button 
+                    type="submit"
+                    disabled={isPending}
+                    className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-neutral-200 transition-colors mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPending ? "Joining..." : "Request Access"}
                   </button>
+                  {message && (
+                    <p className={`text-xs font-mono ${message.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                      {message.text}
+                    </p>
+                  )}
                 </form>
               </motion.div>
             )}

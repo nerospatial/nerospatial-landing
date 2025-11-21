@@ -85,11 +85,11 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const repeatedMarqueeContent = React.useMemo(() => {
     return Array.from({ length: 4 }).map((_, idx) => (
       <React.Fragment key={idx}>
-        <span className="text-black uppercase font-bold text-[5vh] leading-[1.2] p-[1vh_1vw_0] tracking-tight">
+        <span className="text-black uppercase font-bold text-2xl md:text-[5vh] leading-[1.2] p-[1vh_1vw_0] tracking-tight">
           {text}
         </span>
         <div
-          className="w-[250px] h-[8vh] my-[2em] mx-[2vw] rounded-full bg-cover bg-center border-2 border-black/10 grayscale group-hover:grayscale-0 transition-all duration-500"
+          className="w-[150px] md:w-[250px] h-12 md:h-[8vh] my-[1em] md:my-[2em] mx-[2vw] rounded-full bg-cover bg-center border-2 border-black/10 grayscale group-hover:grayscale-0 transition-all duration-500"
           style={{ backgroundImage: `url(${image})` }}
         />
       </React.Fragment>
@@ -102,7 +102,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
       ref={itemRef}
     >
       <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-bold text-white text-[5vh] transition-colors duration-300 z-10 group-hover:text-transparent"
+        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-bold text-white text-2xl md:text-[5vh] transition-colors duration-300 z-10 group-hover:text-transparent"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

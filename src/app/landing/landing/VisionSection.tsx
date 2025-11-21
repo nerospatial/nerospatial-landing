@@ -80,7 +80,7 @@ export default function VisionSection() {
           Our mission is to build the spatial computing infrastructure that empowers human potential.
         </p>
 
-        <div ref={menuRef} className="w-full h-[60vh] opacity-0">
+        <div ref={menuRef} className="w-full h-[50vh] md:h-[60vh] opacity-0">
           <FlowingMenu
             items={[
               {

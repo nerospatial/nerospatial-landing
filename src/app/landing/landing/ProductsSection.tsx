@@ -79,7 +79,7 @@ export default function ProductsSection() {
     <section
       id="products"
       ref={containerRef}
-      className="relative min-h-screen w-full flex flex-col items-center justify-center py-32 bg-black overflow-hidden"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center py-16 md:py-32 bg-black overflow-hidden"
     >
       {/* Background Elements - Subtle Monochrome */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900/20 via-black to-black pointer-events-none" />
@@ -88,12 +88,12 @@ export default function ProductsSection() {
         <div className="flex flex-col items-center text-center">
           <h2
             ref={titleRef}
-            className="text-6xl md:text-9xl font-black text-white tracking-tighter uppercase mb-8 opacity-0"
+            className="text-4xl md:text-7xl lg:text-9xl font-black text-white tracking-tighter uppercase mb-8 opacity-0"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             The <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">Products</span>
           </h2>
-          <p className="text-neutral-400 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
+          <p className="text-neutral-400 max-w-2xl text-base md:text-lg lg:text-xl font-light leading-relaxed">
             Precision-engineered hardware and software, designed to seamlessly integrate into your reality.
           </p>
         </div>
